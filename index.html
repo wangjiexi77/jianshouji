@@ -235,7 +235,9 @@ body{
 .ko-trans{font-size:11px;background:#26272c;color:#bdbdc4;border-radius:4px;padding:1px 6px;margin-left:4px;white-space:nowrap;}
 .dc-inputbar{display:flex;align-items:center;gap:10px;background:#1f2025;padding:10px 12px 22px;border-top:1px solid #26272c;}
 .dc-inputbar .voice{width:30px;height:30px;border:1px solid #55555c;border-radius:50%;display:grid;place-items:center;font-size:14px;color:#cfcfd4;flex-shrink:0;}
-.dc-input{flex:1;height:34px;background:#17181c;border-radius:6px;}
+.dc-input{flex:1;height:34px;background:#17181c;border-radius:6px;border:none;outline:none;color:#eaeaea;padding:0 10px;font-size:15px;}
+.dc-inputbar .send{display:none;background:#07c160;color:#fff;font-size:13px;border-radius:6px;padding:6px 12px;cursor:pointer;}
+.dc-inputbar .send.show{display:block;}
 .dc-inputbar .ico{font-size:23px;color:#cfcfd4;}
 /* 通讯录 */
 .contact-cell{display:flex;align-items:center;gap:12px;padding:9px 14px;background:#fff;border-bottom:1px solid #f0f0f2;cursor:pointer;}
@@ -421,7 +423,7 @@ body{
               </div>
             </div>
             <div class="wx-cell" onclick="openApp('wechat-chat')">
-              <div class="wx-ava" style="background:#f2f2f4;">🐑<span class="badge">7</span></div>
+              <div class="wx-ava" style="background:#cfe3ff;">🐑<span class="badge">7</span></div>
               <div class="wx-cell-main">
                 <div class="wx-cell-title">BLGXun<time>17:23</time></div>
                 <div class="wx-cell-sub">[动画表情] 多久多久</div>
@@ -431,8 +433,8 @@ body{
           <div class="wx-tabbar">
             <div class="wx-tab on"><span class="ti">💬</span>微信</div>
             <div class="wx-tab" onclick="openApp('wechat-contacts')"><span class="ti">👥</span>通讯录</div>
-            <div class="wx-tab"><span class="ti">🧭</span>发现</div>
-            <div class="wx-tab"><span class="ti">👤</span>我</div>
+            <div class="wx-tab" onclick="openApp('wechat-discover')"><span class="ti">🧭</span>发现</div>
+            <div class="wx-tab" onclick="openApp('wechat-me')"><span class="ti">👤</span>我</div>
           </div>
         </div>
       </div>
@@ -440,7 +442,7 @@ body{
       <!-- ============ 微信 · 群聊 2026 BLG ============ -->
       <div class="app-screen" id="app-wechat-group">
         <div class="wx-page dark-page">
-          <div class="dc-nav"><span class="bk" onclick="closeApp('wechat-group')">‹</span><span>2026 BLG(15)</span><span class="more">···</span></div>
+          <div class="dc-nav"><span class="bk" onclick="closeApp('wechat-group')">‹</span><span>2026 BLG(15)</span><span class="more" onclick="openApp('wechat-groupinfo')" style="cursor:pointer;">···</span></div>
           <div class="dc-body">
             <div class="dc-time"><span>16:44</span></div>
             <div class="msg-item">
@@ -461,7 +463,7 @@ body{
               <div class="msg-avatar" style="background:#3a3a3f;">🐕</div>
               <div>
                 <div class="msg-name">阿杰</div>
-                <div class="dc-transfer"><div class="tic">⇄</div><div><div style="font-size:16px;font-weight:600;">¥ 5.00</div><div style="font-size:11px;opacity:.85;margin-top:2px;">转账待接收</div></div></div>
+                <div class="dc-transfer" onclick="openApp('wechat-transfer')" style="cursor:pointer;"><div class="tic">⇄</div><div><div style="font-size:16px;font-weight:600;">¥ 5.00</div><div style="font-size:11px;opacity:.85;margin-top:2px;">转账待接收</div></div></div>
               </div>
             </div>
             <div class="dc-time"><span>04:17</span></div>
@@ -508,7 +510,21 @@ body{
               <div><div class="msg-name">BLGON</div><div class="msg-bubble">谁吃烤匠</div></div>
             </div>
           </div>
-          <div class="dc-inputbar"><div class="voice">🔊</div><div class="dc-input"></div><span class="ico">😊</span><span class="ico">⊕</span></div>
+          <div class="wx-add-panel" id="addPanel">
+            <div class="cell"><div class="ic">🖼️</div>相册</div>
+            <div class="cell"><div class="ic">📷</div>拍摄</div>
+            <div class="cell"><div class="ic">📞</div>语音通话</div>
+            <div class="cell"><div class="ic">🧧</div>红包</div>
+            <div class="cell"><div class="ic">💸</div>转账</div>
+            <div class="cell"><div class="ic">📍</div>位置</div>
+          </div>
+          <div class="dc-inputbar">
+            <div class="voice">🔊</div>
+            <input class="dc-input" id="wxInput" onkeydown="wxInputKey(event)">
+            <span class="ico">😊</span>
+            <span class="send" id="wxSend" onclick="sendMsg()">发送</span>
+            <span class="ico" id="wxPlus" onclick="toggleAddPanel()" style="cursor:pointer;">⊕</span>
+          </div>
         </div>
       </div>
 
@@ -551,7 +567,10 @@ body{
           <div class="wx-header">通讯录<span class="plus" onclick="closeApp('wechat-contacts')" style="cursor:pointer;">✕</span></div>
           <div class="wx-search">🔍 搜索</div>
           <div class="wx-list">
-            <div class="contact-cell" onclick="openApp('wechat-chat')"><div class="wx-ava" style="background:#f2f2f4;">🐑</div><span class="nm">BLGXun</span><span class="arr">›</span></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#fa9f3c;">👋</div><span class="nm">新的朋友</span><span class="arr">›</span></div>
+            <div class="contact-cell" onclick="openApp('wechat-group')"><div class="wx-ava group-ava"><span>🐑</span><span>🌸</span><span>👾</span><span>🍔</span></div><span class="nm">群聊</span><span class="arr">›</span></div>
+            <div style="background:#f6f7fa;padding:6px 14px;font-size:12px;color:#8a8a8e;">B</div>
+            <div class="contact-cell" onclick="openApp('wechat-chat')"><div class="wx-ava" style="background:#cfe3ff;">🐑</div><span class="nm">BLGXun</span><span class="arr">›</span></div>
             <div class="contact-cell"><div class="wx-ava" style="background:#ffd6e8;">🌸</div><span class="nm">BLGKnight</span><span class="arr">›</span></div>
             <div class="contact-cell"><div class="wx-ava" style="background:#e3d6ff;">👾</div><span class="nm">BLGFlandre</span><span class="arr">›</span></div>
             <div class="contact-cell"><div class="wx-ava" style="background:#ffe9c4;">🍔</div><span class="nm">BLGON</span><span class="arr">›</span></div>
@@ -561,8 +580,165 @@ body{
           <div class="wx-tabbar">
             <div class="wx-tab" onclick="closeApp('wechat-contacts')"><span class="ti">💬</span>微信</div>
             <div class="wx-tab on"><span class="ti">👥</span>通讯录</div>
-            <div class="wx-tab"><span class="ti">🧭</span>发现</div>
-            <div class="wx-tab"><span class="ti">👤</span>我</div>
+            <div class="wx-tab" onclick="closeApp('wechat-contacts');openApp('wechat-discover')"><span class="ti">🧭</span>发现</div>
+            <div class="wx-tab" onclick="closeApp('wechat-contacts');openApp('wechat-me')"><span class="ti">👤</span>我</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 微信 · 发现 ============ -->
+      <div class="app-screen" id="app-wechat-discover">
+        <div class="wx-page">
+          <div class="wx-header">发现<span class="plus" onclick="closeApp('wechat-discover')" style="cursor:pointer;">✕</span></div>
+          <div class="wx-list" style="background:#f6f7fa;">
+            <div style="height:10px;"></div>
+            <div class="contact-cell" onclick="openApp('wechat-moments')"><div class="wx-ava" style="background:linear-gradient(135deg,#ffd23c,#ff7a3c);">🌈</div><span class="nm">朋友圈</span><span class="arr">›</span></div>
+            <div style="height:10px;"></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#4787ee;">🎥</div><span class="nm">视频号</span><span class="arr">›</span></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#07c160;">📡</div><span class="nm">直播</span><span class="arr">›</span></div>
+            <div style="height:10px;"></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#f2b23c;">🔍</div><span class="nm">搜一搜</span><span class="arr">›</span></div>
+            <div style="height:10px;"></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#ea6245;">🛍️</div><span class="nm">购物</span><span class="arr">›</span></div>
+            <div style="height:10px;"></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#5f6ded;">🎮</div><span class="nm">游戏</span><span class="arr">›</span></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#07c160;">🧩</div><span class="nm">小程序</span><span class="arr">›</span></div>
+          </div>
+          <div class="wx-tabbar">
+            <div class="wx-tab" onclick="closeApp('wechat-discover')"><span class="ti">💬</span>微信</div>
+            <div class="wx-tab" onclick="closeApp('wechat-discover');openApp('wechat-contacts')"><span class="ti">👥</span>通讯录</div>
+            <div class="wx-tab on"><span class="ti">🧭</span>发现</div>
+            <div class="wx-tab" onclick="closeApp('wechat-discover');openApp('wechat-me')"><span class="ti">👤</span>我</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 微信 · 朋友圈 ============ -->
+      <div class="app-screen" id="app-wechat-moments">
+        <div class="wx-page" style="padding-top:0;background:#fff;">
+          <div class="mo-cover">
+            <div class="bg-cover"></div>
+            <div style="position:absolute;right:14px;bottom:-16px;display:flex;align-items:center;gap:8px;">
+              <span style="color:#fff;font-size:15px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.5);">顽皮的自己</span>
+              <div class="wx-ava" style="background:#cfe3ff;">🤓</div>
+            </div>
+          </div>
+          <div style="padding:34px 14px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f0f2;">
+            <span style="font-size:13px;color:#576b95;">今天</span>
+            <span style="font-size:20px;cursor:pointer;" onclick="closeApp('wechat-moments')">✕</span>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:6px 14px;">
+            <div class="mo-post">
+              <div class="wx-ava" style="width:40px;height:40px;font-size:19px;background:#ffd6e8;">🌸</div>
+              <div class="mo-main">
+                <div class="mo-name">BLGKnight</div>
+                <div class="mo-text">今天训练赛打完手都是抖的，但还是赢了，开心！</div>
+                <div class="mo-imgs"><div style="background:linear-gradient(160deg,#4db2e8,#2b8fd0);">🏆</div><div style="background:#ffe9c4;">🍔</div></div>
+                <div class="mo-meta"><span>2小时前</span><span class="mo-cmt">💬</span></div>
+                <div class="mo-comments">阿杰：稳！</div>
+              </div>
+            </div>
+            <div class="mo-post">
+              <div class="wx-ava" style="width:40px;height:40px;font-size:19px;background:#ffe9c4;">🍔</div>
+              <div class="mo-main">
+                <div class="mo-name">BLGON</div>
+                <div class="mo-text">谁懂啊，这家烤匠真的绝</div>
+                <div class="mo-imgs"><div style="background:linear-gradient(160deg,#fdf3e3,#f5e3c4);">🍢</div></div>
+                <div class="mo-meta"><span>5小时前</span><span class="mo-cmt">💬</span></div>
+                <div class="mo-comments">BLGKnight：地址发我<br>BLGXun：+1</div>
+              </div>
+            </div>
+            <div class="mo-post">
+              <div class="wx-ava" style="width:40px;height:40px;font-size:19px;background:#cfe3ff;">🐑</div>
+              <div class="mo-main">
+                <div class="mo-name">BLGXun</div>
+                <div class="mo-text">新赛季赛程出了，冲！</div>
+                <div class="mo-imgs"><div style="background:linear-gradient(160deg,#eaf5ff,#cfe8ff);font-size:34px;">📅</div></div>
+                <div class="mo-meta"><span>昨天 23:10</span><span class="mo-cmt">💬</span></div>
+              </div>
+            </div>
+            <div class="mo-post">
+              <div class="wx-ava" style="width:40px;height:40px;font-size:19px;background:#d5e5f5;">🏔️</div>
+              <div class="mo-main">
+                <div class="mo-name">BLGDaeny</div>
+                <div class="mo-text">Good game. 잘하셨습니다.</div>
+                <div class="mo-meta"><span>昨天 20:02</span><span class="mo-cmt">💬</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 微信 · 我 ============ -->
+      <div class="app-screen" id="app-wechat-me">
+        <div class="wx-page">
+          <div class="wx-header" style="padding-top:10px;"><span></span><span class="plus" onclick="closeApp('wechat-me')" style="cursor:pointer;">✕</span></div>
+          <div class="wx-list" style="background:#f6f7fa;">
+            <div class="contact-cell" style="padding:16px 14px;">
+              <div class="wx-ava" style="width:58px;height:58px;font-size:28px;background:#cfe3ff;">🤓</div>
+              <div style="flex:1;">
+                <div style="font-size:18px;font-weight:600;color:#111;">顽皮的自己</div>
+                <div style="font-size:13px;color:#8a8a8e;margin-top:3px;">微信号：BLG_fan_1025</div>
+              </div>
+              <span style="color:#c5c5ca;font-size:13px;">▦ ›</span>
+            </div>
+            <div style="height:10px;"></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#07c160;">💳</div><span class="nm">服务</span><span class="arr">›</span></div>
+            <div style="height:10px;"></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#fa9f3c;">⭐</div><span class="nm">收藏</span><span class="arr">›</span></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#4787ee;">🖼️</div><span class="nm">相册</span><span class="arr">›</span></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#f2b23c;">😀</div><span class="nm">表情</span><span class="arr">›</span></div>
+            <div style="height:10px;"></div>
+            <div class="contact-cell"><div class="wx-ava" style="background:#5f6ded;">⚙️</div><span class="nm">设置</span><span class="arr">›</span></div>
+          </div>
+          <div class="wx-tabbar">
+            <div class="wx-tab" onclick="closeApp('wechat-me')"><span class="ti">💬</span>微信</div>
+            <div class="wx-tab" onclick="closeApp('wechat-me');openApp('wechat-contacts')"><span class="ti">👥</span>通讯录</div>
+            <div class="wx-tab" onclick="closeApp('wechat-me');openApp('wechat-discover')"><span class="ti">🧭</span>发现</div>
+            <div class="wx-tab on"><span class="ti">👤</span>我</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 微信 · 群信息 ============ -->
+      <div class="app-screen" id="app-wechat-groupinfo">
+        <div class="wx-page dark-page">
+          <div class="dc-nav"><span class="bk" onclick="closeApp('wechat-groupinfo')">‹</span><span>聊天信息</span><span></span></div>
+          <div class="wx-list" style="background:#17181c;">
+            <div class="gi-members">
+              <div class="gi-m"><div class="wx-ava" style="background:#cfe3ff;">🐑</div><span>BLGXun</span></div>
+              <div class="gi-m"><div class="wx-ava" style="background:#ffd6e8;">🌸</div><span>BLGKnight</span></div>
+              <div class="gi-m"><div class="wx-ava" style="background:#e3d6ff;">👾</div><span>BLGFlandre</span></div>
+              <div class="gi-m"><div class="wx-ava" style="background:#ffe9c4;">🍔</div><span>BLGON</span></div>
+              <div class="gi-m"><div class="wx-ava" style="background:#d5e5f5;">🏔️</div><span>BLGDaeny</span></div>
+              <div class="gi-m"><div class="wx-ava" style="background:#3a3a3f;">🐕</div><span>阿杰</span></div>
+              <div class="gi-m"><div class="wx-ava" style="background:#26272c;color:#9a9aa0;border:1px dashed #55555c;">＋</div><span>添加</span></div>
+            </div>
+            <div style="height:10px;background:#111216;"></div>
+            <div class="contact-cell" style="background:#1f2025;border-color:#26272c;"><span class="nm" style="color:#e6e6e6;">群聊名称</span><span style="color:#8a8a8e;font-size:14px;">2026 BLG ›</span></div>
+            <div class="contact-cell" style="background:#1f2025;border-color:#26272c;"><span class="nm" style="color:#e6e6e6;">群二维码</span><span style="color:#8a8a8e;">▦ ›</span></div>
+            <div class="contact-cell" style="background:#1f2025;border-color:#26272c;"><span class="nm" style="color:#e6e6e6;">群公告</span><span style="color:#8a8a8e;font-size:14px;">未设置 ›</span></div>
+            <div class="contact-cell" style="background:#1f2025;border-color:#26272c;"><span class="nm" style="color:#e6e6e6;">查找聊天记录</span><span class="arr">›</span></div>
+            <div style="height:10px;background:#111216;"></div>
+            <div class="contact-cell" style="background:#1f2025;border-color:#26272c;"><span class="nm" style="color:#e6e6e6;">消息免打扰</span><span style="font-size:18px;">🔕</span></div>
+            <div class="contact-cell" style="background:#1f2025;border-color:#26272c;"><span class="nm" style="color:#e6e6e6;">置顶聊天</span><span style="font-size:18px;color:#55555c;">⏶</span></div>
+            <div style="height:10px;background:#111216;"></div>
+            <div class="contact-cell" style="background:#1f2025;border-color:#26272c;justify-content:center;"><span style="color:#f0506e;font-size:16px;text-align:center;flex:1;">删除并退出</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 微信 · 转账详情 ============ -->
+      <div class="app-screen" id="app-wechat-transfer">
+        <div class="wx-page">
+          <div class="wx-header" style="font-size:17px;"><span style="cursor:pointer;font-size:24px;font-weight:400;" onclick="closeApp('wechat-transfer')">‹</span>转账<span class="plus" onclick="closeApp('wechat-transfer')" style="cursor:pointer;">✕</span></div>
+          <div class="wx-list" style="background:#f6f7fa;display:flex;flex-direction:column;align-items:center;padding-top:36px;">
+            <div class="wx-ava" style="width:56px;height:56px;font-size:26px;background:#3a3a3f;">🐕</div>
+            <div style="font-size:15px;color:#333;margin-top:10px;">阿杰</div>
+            <div style="font-size:13px;color:#8a8a8e;margin-top:2px;">向你转账</div>
+            <div style="font-size:38px;font-weight:700;color:#111;margin-top:14px;">¥ 5.00</div>
+            <div style="background:#07c160;color:#fff;font-size:16px;border-radius:8px;padding:12px 52px;margin-top:28px;cursor:pointer;">确认收款</div>
+            <div style="font-size:12px;color:#8a8a8e;margin-top:14px;">1 天内未收款将自动退回</div>
           </div>
         </div>
       </div>
@@ -801,6 +977,36 @@ lockEl.addEventListener('mouseup',function(e){
   if(swipeY!==null && swipeY-e.clientY>60) goPasscode();
   swipeY=null;
 });
+
+/* -------- 微信群聊交互：+ 面板 / 发消息 -------- */
+function toggleAddPanel(){
+  var p=document.getElementById('addPanel');
+  if(p) p.classList.toggle('open');
+}
+var wxInp=document.getElementById('wxInput');
+if(wxInp){
+  wxInp.addEventListener('input',function(){
+    var has=this.value.trim().length>0;
+    document.getElementById('wxSend').classList.toggle('show',has);
+    document.getElementById('wxPlus').style.display=has?'none':'block';
+  });
+}
+function wxInputKey(e){ if(e.key==='Enter'){ sendMsg(); } }
+function sendMsg(){
+  var inp=document.getElementById('wxInput'),v=inp.value.trim();
+  if(!v)return;
+  var body=document.querySelector('#app-wechat-group .dc-body');
+  var d=document.createElement('div');
+  d.className='msg-item self';
+  d.innerHTML='<div class="msg-avatar" style="background:#cfe3ff;">🤓</div><div><div class="msg-bubble"></div></div>';
+  d.querySelector('.msg-bubble').textContent=v;
+  body.appendChild(d);
+  body.scrollTop=body.scrollHeight;
+  inp.value='';
+  document.getElementById('wxSend').classList.remove('show');
+  document.getElementById('wxPlus').style.display='block';
+  inp.focus();
+}
 </script>
 </body>
 </html>
