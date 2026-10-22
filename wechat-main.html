@@ -223,22 +223,23 @@ body.embed .phone{max-width:none;max-height:none;height:100%;border-radius:0;box
 .moments.show{display:flex;}
 .mo-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 /* 封面 */
-.mo-cover{position:relative;width:100%;aspect-ratio:567/335;overflow:hidden;flex-shrink:0;}
+.mo-cover{position:relative;width:100%;aspect-ratio:567/335;overflow:visible;flex-shrink:0;}
 .mo-cover-img{width:100%;height:100%;object-fit:cover;display:block;}
 .mo-nav{position:absolute;top:6px;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;}
 .mo-back{color:#fff;font-size:30px;line-height:1;cursor:pointer;text-shadow:0 1px 4px rgba(0,0,0,.5);padding:0 6px;}
 .mo-cam{width:30px;height:30px;display:grid;place-items:center;cursor:pointer;}
 .mo-cam svg{width:24px;height:24px;filter:drop-shadow(0 1px 4px rgba(0,0,0,.45));}
 /* 封面右下：昵称 + 头像（微信标准样式：常规字体、方形圆角头像） */
-.mo-owner{position:absolute;right:14px;bottom:0;display:flex;align-items:flex-end;gap:10px;}
+/* 头像 + 昵称：向下移动，头像正好处在封面底边与下方白色区域的分界线上（上下各一半） */
+.mo-owner{position:absolute;right:14px;bottom:-31px;display:flex;align-items:flex-end;gap:10px;z-index:3;}
 .mo-name{
-  color:#fff;font-size:17px;font-weight:400;letter-spacing:0;margin-bottom:8px;
+  color:#fff;font-size:17px;font-weight:400;letter-spacing:0;margin-bottom:39px;
   text-shadow:0 1px 4px rgba(0,0,0,.5);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
 }
 .mo-avatar{width:62px;height:62px;border-radius:4px;object-fit:contain;background:#fff;display:block;box-shadow:0 1px 6px rgba(0,0,0,.18);}
 /* 动态列表 */
-.mo-list{padding:24px 0 30px;}
+.mo-list{padding:42px 0 30px;}
 .mo-item{display:flex;gap:10px;padding:16px 14px 0;}
 .mo-item .mo-ava{width:40px;height:40px;border-radius:4px;flex-shrink:0;overflow:hidden;display:grid;place-items:center;font-size:19px;}
 .mo-item .mo-ava img{width:100%;height:100%;object-fit:cover;}
@@ -641,7 +642,7 @@ const ME = { name:'圈恩', avatar:'🐱', bg:'#cfe3ff' };
 const friends = [
   { id:'laoxun',   name:'牢勋',   avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg' },
   { id:'khuang',   name:'k皇',    avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg' },
-  { id:'dashi',    name:'大师',   avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg' },
+  { id:'dashi',    name:'圣枪哥',   avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg' },
   { id:'dadan',    name:'大丹',   avatar:'🏔️', bg:'#d5e5f5', img:'avatar-danni.png' },
   { id:'zebin',    name:'陈泽彬', avatar:'👦', bg:'#cfe3ff', img:'avatar-zebin.jpg' },
   { id:'gege',     name:'哥哥',   avatar:'👨', bg:'#ffe9c4', img:'avatar-gege.jpg' },
@@ -652,7 +653,7 @@ const friends = [
 const blgMembers = [
   {name:'牢勋', avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg'},
   {name:'k皇', avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg'},
-  {name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg'},
+  {name:'圣枪哥', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg'},
   {name:'大丹', avatar:'🏔️', bg:'#d5e5f5', img:'avatar-danni.png'},
   {name:'光勋', avatar:'💡', bg:'#ffe9c4'},
   {name:'袁玺', avatar:'🎨', bg:'#e3d6ff'},
@@ -701,12 +702,12 @@ const chats = {
     ]
   },
   dashi: {
-    type:'single', name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg',
+    type:'single', name:'圣枪哥', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg',
     last:'上单我来C', time:'昨天', unread:0,
     messages:[
-      {time:'昨天 22:10', sender:'大师', text:'明天训练赛我打上路'},
+      {time:'昨天 22:10', sender:'圣枪哥', text:'明天训练赛我打上路'},
       {time:'昨天 22:12', sender:'me', text:'收到'},
-      {time:'昨天 22:15', sender:'大师', text:'上单我来C'},
+      {time:'昨天 22:15', sender:'圣枪哥', text:'上单我来C'},
     ]
   },
   dadan: {
@@ -747,19 +748,19 @@ const chats = {
   },
   // ---- 群聊 ----
   blg2026: {
-    type:'group', name:'2026 BLG（17）', avatar:'👥', bg:'#4787ee', img:'group-blg.png',
+    type:'group', name:'2026 BLG（17）', avatar:'👥', bg:'#4787ee', img:'group-blg.jpg',
     memberCount:17, members:blgMembers,
     last:'大丹：明天训练赛时间', time:'18:00', unread:5,
     messages:[
       {time:'17:50', sender:'大丹', text:'내일 훈련 일정 공지합니다'},
       {time:'17:52', sender:'牢勋', text:'收到'},
       {time:'17:55', sender:'k皇', text:'1'},
-      {time:'17:58', sender:'大师', text:'👌'},
+      {time:'17:58', sender:'圣枪哥', text:'👌'},
       {time:'18:00', sender:'大丹', text:'明天训练赛时间'},
     ]
   },
   yizhicuan: {
-    type:'group', name:'一直串，烦不烦（5）', avatar:'🔥', bg:'#ea6245', img:'group-yizhicuan.png',
+    type:'group', name:'一直串，烦不烦（5）', avatar:'🔥', bg:'#ea6245', img:'group-yizhicuan.jpg',
     memberCount:5, members:czMembers,
     last:'牢勋：别串了行不行', time:'16:40', unread:0,
     messages:[
@@ -1265,7 +1266,7 @@ const moments = [
     name:'牢勋', ava:'avatar-laoxun.jpg', time:'10分钟前',
     text:'又是练到凌晨的一天。明天继续。',
     imgs:[MIMG('dark esports training room with many computer monitors glowing, empty chairs, moody blue light, realistic photo','landscape_4_3')],
-    likes:['k皇','大师','大丹','陈泽彬'],
+    likes:['k皇','圣枪哥','大丹','陈泽彬'],
     comments:[{u:'k皇', t:'早点睡吧哥'},{u:'大丹', t:'明天见'}]
   },
   {
@@ -1279,7 +1280,7 @@ const moments = [
     comments:[{u:'哥哥', t:'下次带我'}]
   },
   {
-    name:'大师', ava:'avatar-dashi.jpg', time:'3小时前',
+    name:'圣枪哥', ava:'avatar-dashi.jpg', time:'3小时前',
     text:'现场氛围直接炸了。',
     imgs:[MIMG('esports arena with huge crowd and bright stage lights, big screen, dramatic atmosphere, realistic photo','landscape_16_9')],
     likes:['牢勋','k皇','陈泽彬','大丹','哥哥'],
@@ -1289,7 +1290,7 @@ const moments = [
     name:'陈泽彬', ava:'avatar-zebin.jpg', time:'昨天 22:41',
     text:'夜跑 5 公里，风很舒服。',
     imgs:[MIMG('city street at night with wet asphalt reflecting street lights, empty road, cinematic realistic photo','landscape_4_3')],
-    likes:['k皇','大师'],
+    likes:['k皇','圣枪哥'],
     comments:[]
   },
   {
@@ -1303,7 +1304,7 @@ const moments = [
     name:'大丹', ava:'avatar-danni.png', time:'2天前',
     text:'新赛季，冲。',
     imgs:[],
-    likes:['牢勋','k皇','大师'],
+    likes:['牢勋','k皇','圣枪哥'],
     comments:[]
   }
 ];
