@@ -497,6 +497,12 @@ body{
         <iframe class="wx-full-frame" src="wechat-main.html?embed=1&v=5" title="微信"></iframe>
       </div>
 
+      <!-- ============ QQ音乐（真实 QQ 音乐移动网页版，内嵌打开） ============ -->
+      <div class="app-screen" id="app-qqmusic">
+        <!-- 首次打开时才写入 src，避免页面加载时就提前请求外部站点 -->
+        <iframe class="wx-full-frame" id="qqMusicFrame" title="QQ音乐"></iframe>
+      </div>
+
       <!-- ============ 微信 · 聊天列表 ============ -->
       <div class="app-screen" id="app-wechat">
         <div class="wx-page">
@@ -1015,6 +1021,11 @@ var appStack = [];
 function openApp(name){
   var el = document.getElementById('app-' + name);
   if(!el) return;
+  // QQ音乐：首次打开才加载真实站点，之后再点击直接复用已加载的页面（保留登录状态与播放进度）
+  if(name === 'qqmusic'){
+    var f = document.getElementById('qqMusicFrame');
+    if(f && !f.src) f.src = 'https://m.y.qq.com/';
+  }
   el.classList.add('active');
   if(appStack[appStack.length - 1] !== name) appStack.push(name);
   hideRecents();
@@ -1148,7 +1159,11 @@ var IOS_GRID = [
   {n:'密码', c1:'#B0B0B8', c2:'#7A7A82',
    s:'<circle cx="24" cy="27" r="6.4" fill="none" stroke="#fff" stroke-width="3"/>' +
      '<path d="M28 31l8 8 3-3-3-3 3-3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'},
-  {app:'wechat-full'}
+  {app:'wechat-full'},
+  {n:'QQ音乐', app:'qqmusic', c1:'#3BD97D', c2:'#12B34F',
+   s:'<g fill="#FFF24A"><circle cx="21.5" cy="36" r="4.6"/><circle cx="37" cy="32" r="4.6"/></g>' +
+     '<g stroke="#FFF24A" stroke-width="3" stroke-linecap="round" fill="none">' +
+     '<path d="M26 36V20.5l15-3.2V32"/></g>'}
 ];
 
 // Dock（iOS 固定 4 个）
@@ -1196,6 +1211,7 @@ function sysHome(){
 // 后台：列出所有已打开的 App 卡片
 var APP_META = {
   'wechat-full':{t:'微信', c:'wx', s:'微'},
+  'qqmusic':{t:'QQ音乐', c:'qm', s:'音'},
   'wechat':{t:'微信', c:'wx', s:'微'},
   'wechat-group':{t:'群聊', c:'wx', s:'群'},
   'wechat-chat':{t:'聊天', c:'wx', s:'聊'},
@@ -1312,7 +1328,7 @@ function bindSwipe(el, name){
 // 绑定到所有 App 页面（完整版微信用 iframe，手势在微信内部处理）
 document.querySelectorAll('.app-screen').forEach(function(el){
   const name = el.id.replace('app-', '');
-  if(name === 'wechat-full') return;
+  if(name === 'wechat-full' || name === 'qqmusic') return; // 这两个是 iframe 内嵌，手势由其内部处理
   bindSwipe(el, name);
 });
 var WEEKS=["周日","周一","周二","周三","周四","周五","周六"];
