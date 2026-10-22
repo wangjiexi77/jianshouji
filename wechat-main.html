@@ -121,7 +121,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .msg-row.me{flex-direction:row-reverse;}
 .msg-avatar{width:36px;height:36px;border-radius:5px;flex-shrink:0;display:grid;place-items:center;font-size:18px;overflow:hidden;}
 .msg-avatar img{width:100%;height:100%;object-fit:cover;}
-.msg-bubble{max-width:70%;padding:9px 12px;border-radius:6px;font-size:15px;line-height:1.4;word-break:break-word;position:relative;}
+.msg-bubble{max-width:100%;padding:9px 12px;border-radius:6px;font-size:15px;line-height:1.4;word-break:break-word;position:relative;}
 .msg-row.other .msg-bubble{background:#fff;color:#111;}
 .msg-row.me .msg-bubble{background:#95ec69;color:#000;}
 /* 气泡尖角 */
@@ -244,7 +244,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
     <div class="chat-body" id="chatBody"></div>
     <div class="chat-input">
       <span class="voice">🎤</span>
-      <input type="text" id="chatInput" placeholder="" maxlength="15" oninput="toggleSend(this)">
+      <input type="text" id="chatInput" placeholder="" maxlength="30" oninput="toggleSend(this)">
       <span class="emo">😊</span>
       <span class="plus" id="plusBtn">＋</span>
       <button class="send-btn" id="sendBtn" onclick="sendMsg()">发送</button>
@@ -294,7 +294,7 @@ const friends = [
   { id:'laoxun',   name:'牢勋',   avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg' },
   { id:'khuang',   name:'k皇',    avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg' },
   { id:'dashi',    name:'大师',   avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg' },
-  { id:'dadan',    name:'大丹',   avatar:'🏔️', bg:'#d5e5f5' },
+  { id:'dadan',    name:'大丹',   avatar:'🏔️', bg:'#d5e5f5', img:'avatar-danni.png' },
   { id:'zebin',    name:'陈泽彬', avatar:'👦', bg:'#cfe3ff', img:'avatar-zebin.jpg' },
   { id:'gege',     name:'哥哥',   avatar:'👨', bg:'#ffe9c4', img:'avatar-gege.jpg' },
   { id:'daoxian',  name:'到贤',   avatar:'🧑', bg:'#cfe3ff', img:'avatar-daoxian.jpg' },
@@ -305,7 +305,7 @@ const blgMembers = [
   {name:'牢勋', avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg'},
   {name:'k皇', avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg'},
   {name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg'},
-  {name:'大丹', avatar:'🏔️', bg:'#d5e5f5'},
+  {name:'大丹', avatar:'🏔️', bg:'#d5e5f5', img:'avatar-danni.png'},
   {name:'光勋', avatar:'💡', bg:'#ffe9c4'},
   {name:'袁玺', avatar:'🎨', bg:'#e3d6ff'},
   {name:'林青', avatar:'🌿', bg:'#d5e5f5'},
@@ -362,7 +362,7 @@ const chats = {
     ]
   },
   dadan: {
-    type:'single', name:'大丹', avatar:'🏔️', bg:'#d5e5f5',
+    type:'single', name:'大丹', avatar:'🏔️', bg:'#d5e5f5', img:'avatar-danni.png',
     last:'화이팅!', time:'昨天', unread:0,
     messages:[
       {time:'昨天 20:00', sender:'大丹', text:'오늘 경기 잘하자'},
