@@ -121,7 +121,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .msg-row.me{flex-direction:row-reverse;}
 .msg-avatar{width:36px;height:36px;border-radius:5px;flex-shrink:0;display:grid;place-items:center;font-size:18px;overflow:hidden;}
 .msg-avatar img{width:100%;height:100%;object-fit:cover;}
-.msg-bubble{max-width:100%;padding:9px 12px;border-radius:6px;font-size:15px;line-height:1.4;word-break:break-word;position:relative;}
+.msg-bubble{max-width:100%;padding:9px 12px;border-radius:6px;font-size:15px;line-height:1.4;word-break:break-word;position:relative;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;}
 .msg-row.other .msg-bubble{background:#fff;color:#111;}
 .msg-row.me .msg-bubble{background:#95ec69;color:#000;}
 /* 气泡尖角 */
@@ -145,6 +145,65 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .gi-cell{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#fff;border-bottom:0.5px solid #e5e5e5;font-size:15px;}
 .gi-cell .lbl{color:#111;}
 .gi-cell .val{color:#999;font-size:14px;}
+
+/* ============ 消息长按菜单 ============ */
+.ctx-mask{position:absolute;inset:0;z-index:30;display:none;}
+.ctx-mask.show{display:block;}
+.ctx-menu{
+  position:absolute;z-index:31;width:250px;background:#fff;border-radius:14px;
+  padding:6px;display:none;overflow:hidden;
+  box-shadow:0 14px 44px rgba(0,0,0,.18),0 2px 10px rgba(0,0,0,.08);
+}
+.ctx-menu.show{display:block;}
+.ctx-item{height:44px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:16px;color:#111;border-radius:8px;cursor:pointer;}
+.ctx-item:active{background:#f2f2f2;}
+.ctx-item.primary{background:#07c160;color:#fff;}
+.ctx-item.primary:active{background:#06ad56;}
+.ctx-item.danger{color:#fa5151;}
+.ctx-item .ic{width:18px;height:18px;line-height:0;flex-shrink:0;}
+.ctx-item .ic svg{width:100%;height:100%;display:block;}
+.ctx-div{height:.5px;background:#e5e5e5;margin:4px 12px;}
+
+/* 气泡内译文 / 引用 */
+.msg-trans{margin-top:6px;padding-top:6px;border-top:.5px dashed rgba(0,0,0,.18);color:#666;font-size:13px;}
+.msg-quote{font-size:12px;color:#666;background:rgba(0,0,0,.05);border-left:2px solid #07c160;padding:4px 8px;margin-bottom:6px;border-radius:3px;}
+
+/* 放大阅读 */
+.read-overlay{position:absolute;inset:0;z-index:60;background:#111;display:none;flex-direction:column;padding:56px 22px 26px;}
+.read-overlay.show{display:flex;}
+.read-overlay .rd-text{flex:1;overflow-y:auto;color:#fff;font-size:22px;line-height:1.75;white-space:pre-wrap;word-break:break-word;}
+.read-overlay .rd-close{align-self:center;margin-top:14px;padding:9px 30px;border-radius:20px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font-size:15px;}
+
+/* 提示条 */
+.toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:80;background:rgba(0,0,0,.78);color:#fff;padding:11px 20px;border-radius:10px;font-size:15px;opacity:0;transition:opacity .22s;pointer-events:none;max-width:80%;text-align:center;}
+.toast.show{opacity:1;}
+
+/* 引用栏 */
+.quote-bar{display:none;align-items:center;gap:8px;padding:7px 12px;background:#efefef;border-top:.5px solid #dedede;font-size:13px;color:#666;}
+.quote-bar.show{display:flex;}
+.quote-bar .qt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.quote-bar .qx{font-size:15px;color:#999;padding:0 4px;}
+
+/* 多选模式 */
+.msg-row .sel-box{width:22px;height:22px;border-radius:50%;border:1.5px solid #c8c8c8;background:#fff;flex-shrink:0;align-self:center;display:none;place-items:center;color:#fff;font-size:13px;}
+.msg-row.selecting .sel-box{display:grid;}
+.msg-row.selecting .sel-box.on{background:#07c160;border-color:#07c160;}
+.select-bar{display:none;align-items:center;gap:16px;padding:9px 16px;background:#f7f7f7;border-top:.5px solid #d9d9d9;font-size:15px;}
+.select-bar.show{display:flex;}
+.select-bar .sc{color:#666;cursor:pointer;}
+.select-bar .count{flex:1;color:#333;}
+.select-bar .act{color:#07c160;cursor:pointer;}
+.select-bar .act.del{color:#fa5151;}
+
+/* 转发选择器 */
+.picker{position:absolute;inset:0;z-index:50;display:none;}
+.picker.show{display:block;}
+.picker .pmask{position:absolute;inset:0;background:rgba(0,0,0,.4);}
+.picker .pcard{position:absolute;left:0;right:0;bottom:0;max-height:70%;background:#fff;border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden;}
+.picker .ph{padding:14px;text-align:center;font-size:16px;font-weight:600;border-bottom:.5px solid #eee;}
+.picker .plist{overflow-y:auto;}
+.picker .pitem{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:.5px solid #f2f2f2;font-size:15px;color:#111;}
+.picker .pava{width:38px;height:38px;border-radius:5px;display:grid;place-items:center;overflow:hidden;font-size:18px;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -242,6 +301,16 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
       <span class="more" onclick="openGroupInfo()">⋯</span>
     </div>
     <div class="chat-body" id="chatBody"></div>
+    <div class="quote-bar" id="quoteBar">
+      <span class="qt" id="quoteText"></span>
+      <span class="qx" onclick="clearQuote()">✕</span>
+    </div>
+    <div class="select-bar" id="selectBar">
+      <span class="sc" onclick="exitSelect()">取消</span>
+      <span class="count" id="selectCount">已选 0 条</span>
+      <span class="act" onclick="multiForward()">转发</span>
+      <span class="act del" onclick="multiDelete()">删除</span>
+    </div>
     <div class="chat-input">
       <span class="voice">🎤</span>
       <input type="text" id="chatInput" placeholder="" maxlength="30" oninput="toggleSend(this)">
@@ -260,6 +329,56 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
     </div>
     <div class="gi-body" id="giBody"></div>
   </div>
+
+  <!-- 长按菜单 -->
+  <div class="ctx-mask" id="ctxMask" onclick="hideCtxMenu()"></div>
+  <div class="ctx-menu" id="ctxMenu">
+    <div class="ctx-item primary" onclick="ctxAction('copy')">复制</div>
+    <div class="ctx-item" onclick="ctxAction('read')">放大阅读</div>
+    <div class="ctx-item" onclick="ctxAction('translate')">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h8M7 4v2M9.5 6c0 4-3 7-6.5 8"/><path d="M4 9c1.5 2.5 3.8 4 6 4.6"/><path d="M13 20l4-10 4 10"/><path d="M14.6 16h4.8"/></svg></span>
+      <span>翻译</span>
+    </div>
+    <div class="ctx-item" onclick="ctxAction('search')">搜一搜</div>
+    <div class="ctx-div"></div>
+    <div class="ctx-item" onclick="ctxAction('forward')">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17c2-8 6-10 10-10"/><path d="M11 4l4 3-4 3"/></svg></span>
+      <span>转发…</span>
+    </div>
+    <div class="ctx-item" onclick="ctxAction('fav')">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linejoin="round"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg></span>
+      <span>收藏</span>
+    </div>
+    <div class="ctx-item" onclick="ctxAction('multi')">多选</div>
+    <div class="ctx-item" onclick="ctxAction('remind')">提醒</div>
+    <div class="ctx-item" onclick="ctxAction('quote')">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.7" stroke-linecap="round"><path d="M9 6C6.2 6 4 8.2 4 11s2.2 5 5 5c.6 0 1-.4 1-1V6z" fill="#111" stroke="none"/><path d="M19 6c-2.8 0-5 2.2-5 5s2.2 5 5 5c.6 0 1-.4 1-1V6z" fill="#111" stroke="none"/></svg></span>
+      <span>引用</span>
+    </div>
+    <div class="ctx-div"></div>
+    <div class="ctx-item danger" onclick="ctxAction('delete')">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fa5151" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></span>
+      <span>删除</span>
+    </div>
+  </div>
+
+  <!-- 放大阅读 -->
+  <div class="read-overlay" id="readOverlay">
+    <div class="rd-text" id="readText"></div>
+    <button class="rd-close" onclick="closeRead()">关闭</button>
+  </div>
+
+  <!-- 转发选择器 -->
+  <div class="picker" id="fwdPicker">
+    <div class="pmask" onclick="closeForward()"></div>
+    <div class="pcard">
+      <div class="ph">选择一个聊天</div>
+      <div class="plist" id="fwdList"></div>
+    </div>
+  </div>
+
+  <!-- 轻提示 -->
+  <div class="toast" id="toast"></div>
 
   <!-- 底部Tab栏 -->
   <div class="tabbar" id="tabbar">
@@ -503,18 +622,18 @@ function renderContacts(){
 
 /* ==================== 打开聊天 ==================== */
 let currentChatId = null;
-function openChat(id){
-  const c = chats[id];
+let selectMode = false;      // 多选模式开关
+let selectedIdx = new Set();  // 多选选中的消息下标
+let quoteState = null;        // 引用中的消息 {sender, text}
+
+// 渲染消息列表（重绘时保持滚动位置）
+function renderChatBody(keepScroll){
+  const c = chats[currentChatId];
   if(!c) return;
-  currentChatId = id;
-  // 清未读
-  c.unread = 0;
-  renderWechatList();
-  // 标题
-  document.getElementById('chatTitle').textContent = c.name;
-  // 消息
   const body = document.getElementById('chatBody');
-  let html = `<div class="msg-time">${c.messages[0].time}</div>`;
+  const oldTop = body.scrollTop;
+  let html = '';
+  if(c.messages.length) html += `<div class="msg-time">${c.messages[0].time}</div>`;
   c.messages.forEach((m,i) => {
     const isMe = m.sender === 'me';
     let avaObj;
@@ -524,23 +643,43 @@ function openChat(id){
     const avaHtml = isMe ? `<img src="avatar-cat.jpg">` : avaInner(avaObj);
     const avaStyle = isMe ? '' : ` style="background:${avaObj.bg};"`;
     const name = c.type==='group' && !isMe ? `<div class="msg-sender">${m.sender}</div>` : '';
-    html += `<div class="msg-row ${isMe?'me':'other'}">
+    const quoteHtml = m.quote ? `<div class="msg-quote">${m.quote}</div>` : '';
+    const transHtml = m.trans ? `<div class="msg-trans">${m.trans}</div>` : '';
+    const selCls = selectMode ? ' selecting' : '';
+    const selOn = selectedIdx.has(i) ? ' on' : '';
+    const selHtml = `<div class="sel-box${selOn}" data-sel="${i}">✓</div>`;
+    html += `<div class="msg-row ${isMe?'me':'other'}${selCls}">
+      ${selectMode ? selHtml : ''}
       <div class="msg-avatar"${avaStyle}>${avaHtml}</div>
       <div>
         ${name}
-        <div class="msg-bubble">${m.text}</div>
+        <div class="msg-bubble" data-cid="${currentChatId}" data-mi="${i}">${quoteHtml}${m.text}${transHtml}</div>
       </div>
     </div>`;
   });
   body.innerHTML = html;
-  body.scrollTop = body.scrollHeight;
-  // 输入框placeholder
+  body.scrollTop = keepScroll ? oldTop : body.scrollHeight;
+}
+
+function openChat(id){
+  const c = chats[id];
+  if(!c) return;
+  const switched = currentChatId !== id;
+  currentChatId = id;
+  c.unread = 0;            // 清未读
+  renderWechatList();
+  document.getElementById('chatTitle').textContent = c.name;
+  if(switched){ selectMode = false; selectedIdx.clear(); clearQuote(); }
+  document.getElementById('selectBar').classList.toggle('show', selectMode);
+  renderChatBody(!switched);
   document.getElementById('chatInput').placeholder = '';
   document.getElementById('chatDetail').classList.add('show');
 }
 
 function closeChat(){
   document.getElementById('chatDetail').classList.remove('show');
+  hideCtxMenu(); closeForward(); closeRead();
+  exitSelect();
   currentChatId = null;
 }
 
@@ -554,12 +693,16 @@ function sendMsg(){
   const text = input.value.trim();
   if(!text || !currentChatId) return;
   const c = chats[currentChatId];
-  c.messages.push({time:'刚刚', sender:'me', text});
+  const msg = {time:'刚刚', sender:'me', text};
+  if(quoteState){ msg.quote = quoteState.sender + '：' + quoteState.text; }
+  c.messages.push(msg);
+  clearQuote();
   // 更新列表last
   c.last = text;
   c.time = '刚刚';
   // 重新渲染当前聊天
-  openChat(currentChatId);
+  renderChatBody();
+  renderWechatList();
   input.value = '';
   toggleSend(input);
   // 模拟对方回复
@@ -570,7 +713,8 @@ function sendMsg(){
       const m = c.members[Math.floor(Math.random()*c.members.length)];
       c.messages.push({time:'刚刚', sender:m.name, text:'哈哈'});
     }
-    if(currentChatId) openChat(currentChatId);
+    if(currentChatId === null) return;
+    renderChatBody();
   }, 800);
 }
 
@@ -611,6 +755,248 @@ tabs.forEach(tab => {
     closeGroupInfo();
   });
 });
+
+/* ==================== 消息长按菜单 ==================== */
+let ctxTarget = null;   // { cid, mi }
+
+// 轻提示
+let toastTimer = null;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1400);
+}
+
+// 显示菜单（锚定在被长按的气泡旁，超出屏幕时自动收拢）
+function showCtxMenu(bubbleEl){
+  const cid = bubbleEl.dataset.cid;
+  const mi = Number(bubbleEl.dataset.mi);
+  if(!chats[cid] || isNaN(mi)) return;
+  ctxTarget = { cid, mi };
+  const menu = document.getElementById('ctxMenu');
+  const mask = document.getElementById('ctxMask');
+  const detail = document.getElementById('chatDetail');
+  const dr = detail.getBoundingClientRect();
+  const br = bubbleEl.getBoundingClientRect();
+  mask.classList.add('show');
+  menu.classList.add('show');
+  const mw = menu.offsetWidth, mh = menu.offsetHeight;
+  // 优先贴着气泡左侧，再做边界收拢
+  let left = br.left - dr.left - 16;
+  left = Math.max(8, Math.min(left, dr.width - mw - 8));
+  let top = br.top - dr.top - 24;
+  top = Math.max(56, Math.min(top, dr.height - mh - 12));
+  menu.style.left = left + 'px';
+  menu.style.top = top + 'px';
+}
+
+function hideCtxMenu(){
+  document.getElementById('ctxMenu').classList.remove('show');
+  document.getElementById('ctxMask').classList.remove('show');
+}
+
+// 菜单项分发
+function ctxAction(action){
+  if(!ctxTarget) return;
+  const { cid, mi } = ctxTarget;
+  const c = chats[cid];
+  const m = c && c.messages[mi];
+  hideCtxMenu();
+  if(!m) return;
+  switch(action){
+    case 'copy':      copyText(m.text); break;
+    case 'read':      openRead(m.text); break;
+    case 'translate': doTranslate(c, mi); break;
+    case 'search':    window.open('https://weixin.sogou.com/weixin?type=2&query=' + encodeURIComponent(m.text), '_blank'); break;
+    case 'forward':   openForward([m.text]); break;
+    case 'fav':       saveFav(c, m); break;
+    case 'multi':     enterSelect(mi); break;
+    case 'remind':    toast('已设置提醒：1 小时后'); break;
+    case 'quote':     setQuote(m); break;
+    case 'delete':    c.messages.splice(mi, 1); renderChatBody(); toast('已删除'); break;
+  }
+}
+
+/* ---------- 复制 ---------- */
+function copyText(text){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+  toast('已复制');
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(ta);
+}
+
+/* ---------- 放大阅读 ---------- */
+function openRead(text){
+  document.getElementById('readText').textContent = text;
+  document.getElementById('readOverlay').classList.add('show');
+}
+function closeRead(){
+  document.getElementById('readOverlay').classList.remove('show');
+}
+
+/* ---------- 翻译 ---------- */
+async function doTranslate(c, mi){
+  const m = c.messages[mi];
+  // 已有译文则收起（再次点击可切换）
+  if(m.trans){ m.trans = ''; renderChatBody(true); return; }
+  toast('翻译中…');
+  try{
+    const url = 'https://api.mymemory.translated.net/get?q=' +
+                encodeURIComponent(m.text.slice(0, 480)) + '&langpair=zh-CN|en';
+    const res = await fetch(url);
+    const data = await res.json();
+    const out = data && data.responseData && data.responseData.translatedText;
+    if(!out || /MYMEMORY WARNING/i.test(out)) throw new Error('bad result');
+    m.trans = '译：' + out;
+    renderChatBody(true);
+  }catch(err){
+    toast('翻译失败，请检查网络');
+  }
+}
+
+/* ---------- 收藏 ---------- */
+function saveFav(c, m){
+  let favs = [];
+  try { favs = JSON.parse(localStorage.getItem('wechat_favs') || '[]'); } catch(e){}
+  favs.unshift({ from: c.type === 'group' ? c.name + '·' + (m.sender === 'me' ? ME.name : m.sender) : c.name,
+                 text: m.text, time: m.time });
+  try { localStorage.setItem('wechat_favs', JSON.stringify(favs.slice(0, 200))); } catch(e){}
+  toast('已收藏');
+}
+
+/* ---------- 引用 ---------- */
+function setQuote(m){
+  quoteState = { sender: m.sender === 'me' ? ME.name : m.sender, text: m.text };
+  document.getElementById('quoteText').textContent = quoteState.sender + '：' + quoteState.text;
+  document.getElementById('quoteBar').classList.add('show');
+  document.getElementById('chatInput').focus();
+}
+function clearQuote(){
+  quoteState = null;
+  document.getElementById('quoteBar').classList.remove('show');
+}
+
+/* ---------- 转发 ---------- */
+let forwardTexts = [];
+function openForward(texts){
+  forwardTexts = texts;
+  const list = document.getElementById('fwdList');
+  let html = '';
+  for(const id in chats){
+    const c = chats[id];
+    html += `<div class="pitem" onclick="doForward('${id}')">
+      <div class="pava" style="background:${c.bg};">${avaInner(c)}</div>
+      <span>${c.name}</span>
+    </div>`;
+  }
+  list.innerHTML = html;
+  document.getElementById('fwdPicker').classList.add('show');
+}
+function closeForward(){
+  document.getElementById('fwdPicker').classList.remove('show');
+}
+function doForward(cid){
+  const c = chats[cid];
+  if(!c) return;
+  forwardTexts.forEach(t => c.messages.push({ time:'刚刚', sender:'me', text:t }));
+  c.last = forwardTexts[forwardTexts.length - 1];
+  c.time = '刚刚';
+  renderWechatList();
+  closeForward();
+  exitSelect();
+  toast('已转发');
+}
+
+/* ---------- 多选 ---------- */
+function enterSelect(idx){
+  selectMode = true;
+  selectedIdx.clear();
+  if(typeof idx === 'number') selectedIdx.add(idx);
+  document.getElementById('selectBar').classList.add('show');
+  renderChatBody(true);
+  updateSelectCount();
+}
+function exitSelect(){
+  selectMode = false;
+  selectedIdx.clear();
+  const bar = document.getElementById('selectBar');
+  if(bar) bar.classList.remove('show');
+  if(currentChatId) renderChatBody(true);
+}
+function updateSelectCount(){
+  document.getElementById('selectCount').textContent = '已选 ' + selectedIdx.size + ' 条';
+}
+function multiDelete(){
+  if(!selectedIdx.size){ toast('请先选择消息'); return; }
+  const c = chats[currentChatId];
+  const nums = Array.from(selectedIdx).sort((a,b) => b - a);
+  nums.forEach(i => c.messages.splice(i, 1));
+  const n = nums.length;
+  selectMode = false;
+  selectedIdx.clear();
+  document.getElementById('selectBar').classList.remove('show');
+  renderChatBody();
+  toast('已删除 ' + n + ' 条');
+}
+function multiForward(){
+  if(!selectedIdx.size){ toast('请先选择消息'); return; }
+  const c = chats[currentChatId];
+  const texts = Array.from(selectedIdx).sort((a,b) => a - b).map(i => c.messages[i].text);
+  openForward(texts);
+}
+
+/* ---------- 长按 / 右键监听 ---------- */
+(function bindLongPress(){
+  const body = document.getElementById('chatBody');
+  let timer = null, startX = 0, startY = 0, moved = false;
+
+  // 多选模式下点击气泡或勾选圈切换选中
+  body.addEventListener('click', e => {
+    if(!selectMode) return;
+    const row = e.target.closest('.msg-row');
+    const bubble = e.target.closest('.msg-bubble');
+    if(!row || !bubble) return;
+    const i = Number(bubble.dataset.mi);
+    if(selectedIdx.has(i)) selectedIdx.delete(i); else selectedIdx.add(i);
+    renderChatBody(true);
+    updateSelectCount();
+  });
+
+  body.addEventListener('pointerdown', e => {
+    if(selectMode) return;
+    const bubble = e.target.closest('.msg-bubble');
+    if(!bubble) return;
+    startX = e.clientX; startY = e.clientY; moved = false;
+    timer = setTimeout(() => { timer = null; showCtxMenu(bubble); }, 420);
+  });
+  body.addEventListener('pointermove', e => {
+    if(!timer) return;
+    if(Math.abs(e.clientX - startX) > 8 || Math.abs(e.clientY - startY) > 8){ moved = true; clearTimeout(timer); timer = null; }
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev => {
+    body.addEventListener(ev, () => { if(timer){ clearTimeout(timer); timer = null; } });
+  });
+  // 桌面端右键
+  body.addEventListener('contextmenu', e => {
+    const bubble = e.target.closest('.msg-bubble');
+    if(!bubble) return;
+    e.preventDefault();
+    showCtxMenu(bubble);
+  });
+})();
 
 /* ==================== 初始化 ==================== */
 renderWechatList();
