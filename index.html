@@ -123,7 +123,7 @@ body{
 .home-page{overflow-y:auto;-webkit-overflow-scrolling:touch;}
 /* 底部 Dock：毛玻璃托盘，固定 4 个图标 */
 .dock{
-  position:fixed;left:10px;right:10px;bottom:34px;
+  position:fixed;left:10px;right:10px;bottom:38px;
   height:74px;border-radius:26px;
   background:rgba(255,255,255,0.28);
   -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
@@ -136,24 +136,24 @@ body{
 
 
 /* ==================== 底部系统栏 ==================== */
-/* 高度 26px，占据屏幕最底部一条空间；App 页面与桌面都让出这 26px，避免遮挡内容 */
-:root{--sysbar-h:26px;}
+/* 高度 30px，占据屏幕最底部一条空间；App 页面与桌面都让出这 30px，避免遮挡内容 */
+:root{--sysbar-h:30px;}
 .sysbar{
   position:absolute;left:0;right:0;bottom:0;
   height:var(--sysbar-h);
   display:flex;align-items:center;justify-content:space-around;
-  z-index:90;
-  background:rgba(255,255,255,0.72);
+  z-index:130;               /* 高于锁屏/密码页，任何界面下都可见 */
+  background:rgba(255,255,255,0.9);
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-  border-top:.5px solid rgba(0,0,0,0.06);
+  border-top:.5px solid rgba(0,0,0,0.12);
 }
 .sys-btn{
   flex:1;height:100%;border:none;background:transparent;
-  display:grid;place-items:center;color:#8a8a8e;cursor:pointer;
+  display:grid;place-items:center;color:#3a3a3e;cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
-.sys-btn svg{width:17px;height:17px;display:block;}
-.sys-btn:active{color:#07c160;background:rgba(0,0,0,0.04);}
+.sys-btn svg{width:19px;height:19px;display:block;}
+.sys-btn:active{color:#07c160;background:rgba(0,0,0,0.06);}
 
 /* 后台多任务 */
 .recents{
@@ -1183,16 +1183,10 @@ function layoutHome(){
 }
 
 
-// 退出软件：关闭所有 App，回到锁屏界面（相当于退出到手机锁屏）
+// 退出软件：关闭所有 App，回到手机桌面
 function sysExit(){
   appStack.slice().forEach(function(n){ closeApp(n); });
   hideRecents();
-  lockEl.style.display = '';
-  passEl.style.display = '';
-  lockEl.classList.remove('away');
-  passEl.classList.remove('away');
-  code = "";
-  renderDots();
 }
 // 回到桌面：关闭全部 App，回到手机桌面
 function sysHome(){
