@@ -132,13 +132,18 @@ body{
   z-index:20;
 }
 .app-screen.active{transform:translateX(0);}
-/* 上滑关闭：从底部上滑时整页向下滑出 */
-.app-screen.closing{
-  transform:translateY(105%) !important;
+/* 左右滑动退出：向右滑出 / 向左滑出 */
+.app-screen.out-right{
+  transform:translateX(105%) !important;
   transition:transform .26s cubic-bezier(.32,.72,0,1);
   pointer-events:none;
 }
-/* 拖动跟手时倾斜缩放，模拟 iOS 后台卡片手感 */
+.app-screen.out-left{
+  transform:translateX(-105%) !important;
+  transition:transform .26s cubic-bezier(.32,.72,0,1);
+  pointer-events:none;
+}
+/* 拖动跟手时无过渡，直接跟随手指 */
 .app-screen.dragging{transition:none;}
 /* 完整版微信（iframe）铺满整个 App 页面 */
 .wx-full-frame{width:100%;height:100%;border:0;display:block;background:#ededed;}
@@ -421,7 +426,7 @@ body{
 
       <!-- ============ 微信 · 完整版（我的产物微信，iframe 嵌入） ============ -->
       <div class="app-screen" id="app-wechat-full">
-        <iframe class="wx-full-frame" src="wechat-main.html?embed=1&v=3" title="微信"></iframe>
+        <iframe class="wx-full-frame" src="wechat-main.html?embed=1&v=4" title="微信"></iframe>
       </div>
 
       <!-- ============ 微信 · 聊天列表 ============ -->
@@ -932,58 +937,54 @@ function closeApp(name){
 window.addEventListener('message', function(e){
   if(e.data && e.data.type === 'wechat-exit'){ closeApp('wechat-full'); }
 });
-/* ==================== iOS 上滑关闭 App ==================== */
-// 手势区域：屏幕底部 90px（Home 指示条附近）起手，向上滑超过 55px 即关闭该 App
-const SWIPE_ZONE = 90;    // 起手区高度
-const SWIPE_DIST = 55;    // 触发关闭的上滑距离
+/* ==================== iOS 左右滑动关闭 App ==================== */
+// 任意位置横向滑动：向左或向右滑超过 80px 即关闭该 App（纵向位移需小于 60px，避免和滚动冲突）
+const SWIPE_DIST = 80;    // 触发关闭的横向距离
 
-// 关闭某个 App 页面（带上滑出场动画）
-function swipeClose(name){
+// 关闭某个 App 页面（带滑出动画，方向跟随手势）
+function swipeClose(name, dir){
   const scr = document.getElementById('app-' + name);
   if(!scr || !scr.classList.contains('active')) return;
   scr.classList.remove('dragging');
-  scr.classList.add('closing');
+  scr.style.transform = '';
+  scr.classList.add(dir < 0 ? 'out-left' : 'out-right');
   // 动画结束后复位，避免影响下次打开
   setTimeout(function(){
-    scr.classList.remove('closing');
+    scr.classList.remove('out-left');
+    scr.classList.remove('out-right');
     scr.classList.remove('active');
   }, 270);
 }
 
-// 给单个页面绑定上滑手势（touch + mouse 都支持）
+// 给单个页面绑定左右滑动退出手势（touch + mouse 都支持）
 function bindSwipe(el, name){
   let startX = 0, startY = 0, tracking = false, dragging = false;
 
   function down(x, y){
-    const r = el.getBoundingClientRect();
-    // 只有从底部区域起手才算
-    if(y < r.bottom - SWIPE_ZONE) return;
     startX = x; startY = y; tracking = true; dragging = false;
   }
   function move(x, y, e){
     if(!tracking) return;
-    const dy = y - startY;              // 向上为负
-    const dx = Math.abs(x - startX);
-    if(dy < -10 && dy < -dx){           // 确认是上滑而非横向滑
+    const dx = x - startX;               // 向右为正
+    const dy = Math.abs(y - startY);
+    if(Math.abs(dx) > 12 && Math.abs(dx) > dy * 1.6){  // 确认为横向滑动
       dragging = true;
       if(e.cancelable) e.preventDefault();
       el.classList.add('dragging');
-      // 跟手：最多下移 40% 屏高，避免拖出空白
-      el.style.transform = 'translateY(' + Math.max(dy * 0.45, -120) + 'px)';
+      el.style.transform = 'translateX(' + dx + 'px)';  // 跟手
     }
   }
   function up(x, y){
     if(!tracking) return;
-    const dy = y - startY;
-    const dx = Math.abs(x - startX);
+    const dx = x - startX;
+    const dy = Math.abs(y - startY);
     tracking = false;
-    el.style.transform = '';
-    if(dragging && dy < -SWIPE_DIST && dx < 120){
-      el.classList.remove('dragging');
-      swipeClose(name);
+    if(dragging && Math.abs(dx) > SWIPE_DIST && dy < 60){
+      swipeClose(name, dx);
       return;
     }
     el.classList.remove('dragging');
+    el.style.transform = '';
   }
 
   // 触摸
