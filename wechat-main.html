@@ -20,6 +20,11 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
   body{padding:16px;}
 }
 
+/* ============ 嵌入模式 ============ */
+/* 被手机模拟器用 iframe 打开（?embed=1）时：去掉外层留白与圆角，铺满整个屏幕 */
+body.embed{background:#ededed;padding:0 !important;}
+body.embed .phone{max-width:none;max-height:none;height:100%;border-radius:0;box-shadow:none;}
+
 /* ============ 状态栏 ============ */
 .status-bar{flex-shrink:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#ededed;font-size:15px;font-weight:600;color:#000;}
 .status-bar .right{display:flex;align-items:center;gap:5px;font-size:13px;}
@@ -299,7 +304,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 
   <!-- 状态栏 -->
   <div class="status-bar">
-    <div class="left">18:41</div>
+    <div class="left" id="sbClock">18:41</div>
     <div class="right">
       <div class="icons">
         <div class="signal"><i></i><i></i><i></i><i></i></div>
@@ -1375,16 +1380,6 @@ function askExit(){
 function closeExitDialog(){
   document.getElementById('exitDialog').classList.remove('show');
 }
-// 确认退出：收起所有浮层，显示黑屏
-function doExit(){
-  closeExitDialog();
-  closeChat();
-  hideCtxMenu();
-  closeForward();
-  closeRead();
-  document.getElementById('groupInfo').classList.remove('show');
-  document.getElementById('exitScreen').classList.add('show');
-}
 // 重新进入：回到微信首页
 function reenterWechat(){
   document.getElementById('exitScreen').classList.remove('show');
@@ -1392,8 +1387,37 @@ function reenterWechat(){
 }
 
 /* ==================== 初始化 ==================== */
+// 嵌入模式：被手机模拟器 iframe 打开时，铺满屏幕并让“退出微信”返回桌面
+const isEmbed = location.search.indexOf('embed=1') > -1;
+if(isEmbed) document.body.classList.add('embed');
+
+// 退出微信：嵌入模式下直接回到手机桌面；独立页则显示黑屏
+function doExit(){
+  closeExitDialog();
+  closeChat();
+  hideCtxMenu();
+  closeForward();
+  closeRead();
+  document.getElementById('groupInfo').classList.remove('show');
+  if(isEmbed){
+    switchTab('wechat');
+    try { window.parent.closeApp('wechat-full'); } catch(e){}
+    return;
+  }
+  document.getElementById('exitScreen').classList.add('show');
+}
+
 renderWechatList();
 renderContacts();
+
+// 状态栏时间实时更新
+function tickClock(){
+  const d = new Date();
+  document.getElementById('sbClock').textContent =
+    String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+tickClock();
+setInterval(tickClock, 30000);
 </script>
 
 </body>
