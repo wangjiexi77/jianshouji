@@ -60,7 +60,8 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .session{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-bottom:0.5px solid #e5e5e5;cursor:pointer;}
 .session:active{background:#ececec;}
 .avatar-wrap{position:relative;flex-shrink:0;}
-.avatar{width:48px;height:48px;border-radius:6px;display:grid;place-items:center;font-size:22px;}
+.avatar{width:48px;height:48px;border-radius:6px;display:grid;place-items:center;font-size:22px;overflow:hidden;}
+.avatar img,.contact-ava img,.gi-ava img{width:100%;height:100%;object-fit:cover;display:block;}
 .red-dot{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;background:#fa5151;color:#fff;font-size:11px;border-radius:9px;display:grid;place-items:center;padding:0 5px;border:2px solid #fff;}
 .session-main{flex:1;min-width:0;}
 .session-top{display:flex;justify-content:space-between;align-items:baseline;}
@@ -72,7 +73,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .contacts-list .cell{padding:8px 14px;}
 .contacts-list .cell .ic-box{width:40px;height:40px;border-radius:4px;}
 .contacts-list .cell .nm{font-size:16px;color:#181818;font-weight:400;}
-.contact-ava{width:40px;height:40px;border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:20px;}
+.contact-ava{width:40px;height:40px;border-radius:4px;flex-shrink:0;display:grid;place-items:center;font-size:20px;overflow:hidden;}
 
 /* ============ 发现 ============ */
 .discover-list .cell{padding:12px 14px;}
@@ -139,7 +140,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .gi-body{flex:1;overflow-y:auto;}
 .gi-members{display:flex;flex-wrap:wrap;gap:14px;padding:14px;background:#fff;}
 .gi-m{width:52px;text-align:center;}
-.gi-m .gi-ava{width:48px;height:48px;border-radius:6px;display:grid;place-items:center;font-size:22px;margin:0 auto 4px;}
+.gi-m .gi-ava{width:48px;height:48px;border-radius:6px;display:grid;place-items:center;font-size:22px;margin:0 auto 4px;overflow:hidden;}
 .gi-m .gi-name{font-size:12px;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .gi-cell{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#fff;border-bottom:0.5px solid #e5e5e5;font-size:15px;}
 .gi-cell .lbl{color:#111;}
@@ -243,7 +244,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
     <div class="chat-body" id="chatBody"></div>
     <div class="chat-input">
       <span class="voice">🎤</span>
-      <input type="text" id="chatInput" placeholder="" oninput="toggleSend(this)">
+      <input type="text" id="chatInput" placeholder="" maxlength="15" oninput="toggleSend(this)">
       <span class="emo">😊</span>
       <span class="plus" id="plusBtn">＋</span>
       <button class="send-btn" id="sendBtn" onclick="sendMsg()">发送</button>
@@ -290,19 +291,20 @@ const ME = { name:'圈恩', avatar:'🐱', bg:'#cfe3ff' };
 
 // 好友列表（通讯录）
 const friends = [
-  { id:'laoxun',   name:'牢勋',   avatar:'🐑', bg:'#cfe3ff' },
-  { id:'khuang',   name:'k皇',    avatar:'🌸', bg:'#ffd6e8' },
-  { id:'dashi',    name:'大师',   avatar:'👾', bg:'#e3d6ff' },
+  { id:'laoxun',   name:'牢勋',   avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg' },
+  { id:'khuang',   name:'k皇',    avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg' },
+  { id:'dashi',    name:'大师',   avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg' },
   { id:'dadan',    name:'大丹',   avatar:'🏔️', bg:'#d5e5f5' },
-  { id:'zebin',    name:'陈泽彬', avatar:'👦', bg:'#cfe3ff' },
-  { id:'gege',     name:'哥哥',   avatar:'👨', bg:'#ffe9c4' },
+  { id:'zebin',    name:'陈泽彬', avatar:'👦', bg:'#cfe3ff', img:'avatar-zebin.jpg' },
+  { id:'gege',     name:'哥哥',   avatar:'👨', bg:'#ffe9c4', img:'avatar-gege.jpg' },
+  { id:'daoxian',  name:'到贤',   avatar:'🧑', bg:'#cfe3ff', img:'avatar-daoxian.jpg' },
 ];
 
 // 2026 BLG 群成员 17人
 const blgMembers = [
-  {name:'牢勋', avatar:'🐑', bg:'#cfe3ff'},
-  {name:'k皇', avatar:'🌸', bg:'#ffd6e8'},
-  {name:'大师', avatar:'👾', bg:'#e3d6ff'},
+  {name:'牢勋', avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg'},
+  {name:'k皇', avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg'},
+  {name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg'},
   {name:'大丹', avatar:'🏔️', bg:'#d5e5f5'},
   {name:'ON', avatar:'🍔', bg:'#ffe9c4'},
   {name:'Elk', avatar:'🦌', bg:'#d5e5f5'},
@@ -321,9 +323,9 @@ const blgMembers = [
 
 // 一直串，烦不烦 群成员 5人
 const czMembers = [
-  {name:'牢勋', avatar:'🐑', bg:'#cfe3ff'},
-  {name:'k皇', avatar:'🌸', bg:'#ffd6e8'},
-  {name:'大师', avatar:'👾', bg:'#e3d6ff'},
+  {name:'牢勋', avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg'},
+  {name:'k皇', avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg'},
+  {name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg'},
   {name:'大丹', avatar:'🏔️', bg:'#d5e5f5'},
   {name:'圈恩', avatar:'🐱', bg:'#cfe3ff'},
 ];
@@ -332,7 +334,7 @@ const czMembers = [
 const chats = {
   // ---- 单聊 ----
   laoxun: {
-    type:'single', name:'牢勋', avatar:'🐑', bg:'#cfe3ff',
+    type:'single', name:'牢勋', avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg',
     last:'晚上训练赛加油', time:'18:30', unread:2,
     messages:[
       {time:'18:20', sender:'牢勋', text:'在吗？今晚训练赛别忘了'},
@@ -342,7 +344,7 @@ const chats = {
     ]
   },
   khuang: {
-    type:'single', name:'k皇', avatar:'🌸', bg:'#ffd6e8',
+    type:'single', name:'k皇', avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg',
     last:'中路来波', time:'17:55', unread:0,
     messages:[
       {time:'17:50', sender:'me', text:'k皇晚上rank吗'},
@@ -351,7 +353,7 @@ const chats = {
     ]
   },
   dashi: {
-    type:'single', name:'大师', avatar:'👾', bg:'#e3d6ff',
+    type:'single', name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg',
     last:'上单我来C', time:'昨天', unread:0,
     messages:[
       {time:'昨天 22:10', sender:'大师', text:'明天训练赛我打上路'},
@@ -369,7 +371,7 @@ const chats = {
     ]
   },
   zebin: {
-    type:'single', name:'陈泽彬', avatar:'👦', bg:'#cfe3ff',
+    type:'single', name:'陈泽彬', avatar:'👦', bg:'#cfe3ff', img:'avatar-zebin.jpg',
     last:'周末一起吃饭', time:'12:30', unread:1,
     messages:[
       {time:'12:25', sender:'陈泽彬', text:'周末有空吗'},
@@ -378,12 +380,21 @@ const chats = {
     ]
   },
   gege: {
-    type:'single', name:'哥哥', avatar:'👨', bg:'#ffe9c4',
+    type:'single', name:'哥哥', avatar:'👨', bg:'#ffe9c4', img:'avatar-gege.jpg',
     last:'生活费转你了', time:'昨天', unread:0,
     messages:[
       {time:'昨天 10:00', sender:'哥哥', text:'这个月生活费'},
       {time:'昨天 10:01', sender:'哥哥', text:'生活费转你了'},
       {time:'昨天 10:05', sender:'me', text:'谢谢哥'},
+    ]
+  },
+  daoxian: {
+    type:'single', name:'到贤', avatar:'🧑', bg:'#cfe3ff', img:'avatar-daoxian.jpg',
+    last:'明天见', time:'刚刚', unread:0,
+    messages:[
+      {time:'刚刚', sender:'到贤', text:'在吗？'},
+      {time:'刚刚', sender:'me', text:'在的'},
+      {time:'刚刚', sender:'到贤', text:'明天见'},
     ]
   },
   // ---- 群聊 ----
@@ -412,6 +423,13 @@ const chats = {
   },
 };
 
+/* ==================== 头像渲染辅助 ==================== */
+// 有img用图片，否则用emoji
+function avaInner(obj){
+  if(obj.img){ return `<img src="${obj.img}" alt="">`; }
+  return obj.avatar;
+}
+
 /* ==================== 渲染微信聊天列表 ==================== */
 function renderWechatList(){
   const box = document.getElementById('pageWechat');
@@ -439,7 +457,7 @@ function renderWechatList(){
     const dot = c.unread > 0 ? `<span class="red-dot">${c.unread}</span>` : '';
     html += `<div class="session" onclick="openChat('${id}')">
       <div class="avatar-wrap">
-        <div class="avatar" style="background:${c.bg};">${c.avatar}</div>
+        <div class="avatar" style="background:${c.bg};">${avaInner(c)}</div>
         ${dot}
       </div>
       <div class="session-main">
@@ -465,7 +483,7 @@ function renderContacts(){
   friends.forEach(f => {
     const letter = f.name[0].toUpperCase();
     // 简单按拼音首字母分组：牢L, kK, 大D, 陈C, 哥G
-    const map = {'牢':'L','k':'K','大':'D','陈':'C','哥':'G'};
+    const map = {'牢':'L','k':'K','大':'D','陈':'C','哥':'G','到':'D'};
     const key = map[f.name[0]] || '#';
     if(!groups[key]) groups[key] = [];
     groups[key].push(f);
@@ -474,7 +492,7 @@ function renderContacts(){
     html += `<div class="letter-bar">${letter}</div>`;
     groups[letter].forEach(f => {
       html += `<div class="cell" onclick="openChat('${f.id}')">
-        <div class="contact-ava" style="background:${f.bg};">${f.avatar}</div>
+        <div class="contact-ava" style="background:${f.bg};">${avaInner(f)}</div>
         <span class="nm">${f.name}</span><span class="arr">›</span>
       </div>`;
     });
@@ -499,9 +517,12 @@ function openChat(id){
   let html = `<div class="msg-time">${c.messages[0].time}</div>`;
   c.messages.forEach((m,i) => {
     const isMe = m.sender === 'me';
-    const ava = isMe ? ME : {avatar:c.avatar, bg:c.bg};
-    const avaHtml = isMe ? `<img src="avatar-cat.jpg">` : ava.avatar;
-    const avaStyle = isMe ? '' : ` style="background:${ava.bg};"`;
+    let avaObj;
+    if(isMe){ avaObj = ME; }
+    else if(c.type === 'group'){ avaObj = c.members.find(mb => mb.name === m.sender) || {avatar:'❓', bg:'#ccc'}; }
+    else { avaObj = c; }
+    const avaHtml = isMe ? `<img src="avatar-cat.jpg">` : avaInner(avaObj);
+    const avaStyle = isMe ? '' : ` style="background:${avaObj.bg};"`;
     const name = c.type==='group' && !isMe ? `<div class="msg-sender">${m.sender}</div>` : '';
     html += `<div class="msg-row ${isMe?'me':'other'}">
       <div class="msg-avatar"${avaStyle}>${avaHtml}</div>
@@ -560,7 +581,7 @@ function openGroupInfo(){
   const body = document.getElementById('giBody');
   let html = `<div class="gi-members">`;
   c.members.forEach(m => {
-    html += `<div class="gi-m"><div class="gi-ava" style="background:${m.bg};">${m.avatar}</div><div class="gi-name">${m.name}</div></div>`;
+    html += `<div class="gi-m"><div class="gi-ava" style="background:${m.bg};">${avaInner(m)}</div><div class="gi-name">${m.name}</div></div>`;
   });
   html += `</div>`;
   html += `<div class="gi-cell"><span class="lbl">群聊名称</span><span class="val">${c.name} ›</span></div>`;
