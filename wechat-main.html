@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>微信</title>
+<style>
+/* ============ 全局重置 ============ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;overflow:hidden;}
+body{
+  background:#ededed; /* 微信聊天列表页背景浅灰 */
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ============ 手机容器 ============ */
+.phone{
+  position:relative;width:100%;max-width:420px;height:100vh;max-height:900px;
+  background:#ededed;display:flex;flex-direction:column;overflow:hidden;
+}
+@media (min-width:480px){
+  .phone{border-radius:40px;overflow:hidden;height:90vh;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  body{padding:16px;}
+}
+
+/* ============ 状态栏（仿iOS） ============ */
+.status-bar{
+  flex-shrink:0;height:44px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;padding-top:env(safe-area-inset-top);
+  background:#ededed;font-size:15px;font-weight:600;color:#000;
+}
+.status-bar .left{display:flex;align-items:center;gap:6px;}
+.status-bar .right{display:flex;align-items:center;gap:5px;font-size:13px;}
+.status-bar .icons{display:flex;gap:4px;align-items:center;}
+/* 信号格 */
+.signal{display:flex;align-items:flex-end;gap:1px;height:11px;}
+.signal i{width:3px;background:#000;border-radius:1px;}
+.signal i:nth-child(1){height:3px;}
+.signal i:nth-child(2){height:5px;}
+.signal i:nth-child(3){height:7px;}
+.signal i:nth-child(4){height:9px;}
+/* WiFi */
+.wifi{width:15px;height:11px;position:relative;}
+.wifi::before{content:"";position:absolute;inset:0;border:2px solid #000;border-top:none;border-radius:0 0 50% 50%;clip-path:polygon(0 0,100% 0,100% 60%,0 60%);}
+/* 电池 */
+.battery{width:24px;height:11px;border:1px solid #000;border-radius:3px;position:relative;padding:1px;}
+.battery::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:#000;border-radius:0 2px 2px 0;}
+.battery i{display:block;height:100%;width:90%;background:#000;border-radius:1px;}
+
+/* ============ 导航栏 ============ */
+.nav{
+  flex-shrink:0;height:44px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;background:#ededed;
+}
+.nav .title{font-size:17px;font-weight:600;color:#000;}
+.nav .actions{display:flex;gap:22px;font-size:22px;color:#000;}
+.nav .actions span{cursor:pointer;}
+
+/* ============ 聊天列表 ============ */
+.chat-list{flex:1;overflow-y:auto;background:#fff;}
+.chat-list::-webkit-scrollbar{width:0;}
+
+/* 会话项 */
+.session{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;background:#fff;
+  border-bottom:0.5px solid #e5e5e5;
+  cursor:pointer;position:relative;
+}
+.session:active{background:#ececec;}
+
+/* 头像 */
+.avatar-wrap{position:relative;flex-shrink:0;}
+.avatar{
+  width:48px;height:48px;border-radius:6px;
+  display:grid;place-items:center;
+  background:#3f7bef; /* 微信公众号蓝 */
+}
+/* 红点未读 */
+.red-dot{
+  position:absolute;top:-3px;right:-3px;
+  min-width:18px;height:18px;
+  background:#fa5151;color:#fff;
+  font-size:11px;border-radius:9px;
+  display:grid;place-items:center;padding:0 5px;
+  border:2px solid #fff;
+}
+
+/* 文字区 */
+.session-main{flex:1;min-width:0;}
+.session-top{display:flex;justify-content:space-between;align-items:baseline;}
+.session-name{font-size:16px;color:#000;font-weight:500;}
+.session-time{font-size:12px;color:#999;flex-shrink:0;margin-left:8px;}
+.session-sub{
+  font-size:13px;color:#999;margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* ============ 底部Tab栏 ============ */
+.tabbar{
+  flex-shrink:0;
+  display:flex;
+  background:#f7f7f7;
+  border-top:0.5px solid #d9d9d9;
+  padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom));
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  cursor:pointer;color:#7a7a7a;font-size:10px;position:relative;
+}
+.tab .ic{font-size:22px;line-height:1;}
+.tab.active{color:#07c160;}
+/* tab上的小红点 */
+.tab .dot{
+  position:absolute;top:2px;left:50%;margin-left:6px;
+  width:9px;height:9px;background:#fa5151;border-radius:50%;
+  border:1.5px solid #f7f7f7;
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- 状态栏 -->
+  <div class="status-bar">
+    <div class="left">18:41</div>
+    <div class="right">
+      <div class="icons">
+        <div class="signal"><i></i><i></i><i></i><i></i></div>
+        <div class="wifi"></div>
+      </div>
+      <div class="battery"><i></i></div>
+    </div>
+  </div>
+
+  <!-- 导航栏 -->
+  <div class="nav">
+    <div></div>
+    <span class="title">微信</span>
+    <div class="actions">
+      <span>🔍</span>
+      <span>＋</span>
+    </div>
+  </div>
+
+  <!-- 聊天列表 -->
+  <div class="chat-list">
+    <!-- 公众号会话 -->
+    <div class="session">
+      <div class="avatar-wrap">
+        <div class="avatar">
+          <!-- 微信公众号图标：蓝色底 + 白色书本/叶子 -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M14 3 L24 7 V17 C24 21 19 24 14 25 C9 24 4 21 4 17 V7 Z" fill="#fff"/>
+            <path d="M14 7 L20 9.2 V16.8 C20 19.2 17.3 21.3 14 22.2 C10.7 21.3 8 19.2 8 16.8 V9.2 Z" fill="#3f7bef"/>
+            <path d="M14 9.5 L17.5 10.8 V16.2 C17.5 17.8 15.9 19.1 14 19.7 C12.1 19.1 10.5 17.8 10.5 16.2 V10.8 Z" fill="#fff"/>
+          </svg>
+        </div>
+        <span class="red-dot"></span>
+      </div>
+      <div class="session-main">
+        <div class="session-top">
+          <span class="session-name">公众号</span>
+          <span class="session-time">昨天</span>
+        </div>
+        <div class="session-sub">快讯：一诺状态 热搜第一，卫冕冠军AG止步KPL...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部Tab栏 -->
+  <div class="tabbar">
+    <div class="tab active">
+      <span class="ic">💬</span>
+      <span>微信</span>
+    </div>
+    <div class="tab">
+      <span class="ic">👤</span>
+      <span>通讯录</span>
+      <span class="dot"></span>
+    </div>
+    <div class="tab">
+      <span class="ic">🧭</span>
+      <span>发现</span>
+      <span class="dot"></span>
+    </div>
+    <div class="tab">
+      <span class="ic">👨</span>
+      <span>我</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
