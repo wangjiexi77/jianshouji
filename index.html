@@ -413,7 +413,7 @@ body{
 
       <!-- ============ 微信 · 完整版（我的产物微信，iframe 嵌入） ============ -->
       <div class="app-screen" id="app-wechat-full">
-        <iframe class="wx-full-frame" src="wechat-main.html?embed=1" title="微信"></iframe>
+        <iframe class="wx-full-frame" src="wechat-main.html?embed=1&v=2" title="微信"></iframe>
       </div>
 
       <!-- ============ 微信 · 聊天列表 ============ -->
@@ -919,6 +919,11 @@ function openApp(name){
 function closeApp(name){
   document.getElementById('app-'+name).classList.remove('active');
 }
+/* 监听完整版微信（iframe）发来的「退出微信」消息，回到手机桌面
+   用 postMessage 而非直接调用父页面函数，file:// 直接打开时也能生效 */
+window.addEventListener('message', function(e){
+  if(e.data && e.data.type === 'wechat-exit'){ closeApp('wechat-full'); }
+});
 /* 状态栏实时时间 + 日历图标真实日期 */
 var WEEKS=["周日","周一","周二","周三","周四","周五","周六"];
 function tick(){
