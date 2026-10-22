@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;overflow:hidden;}
 body{
-  background:#ededed; /* 微信聊天列表页背景浅灰 */
+  background:#ededed;
   display:flex;align-items:center;justify-content:center;
 }
 
@@ -33,17 +33,14 @@ body{
 .status-bar .left{display:flex;align-items:center;gap:6px;}
 .status-bar .right{display:flex;align-items:center;gap:5px;font-size:13px;}
 .status-bar .icons{display:flex;gap:4px;align-items:center;}
-/* 信号格 */
 .signal{display:flex;align-items:flex-end;gap:1px;height:11px;}
 .signal i{width:3px;background:#000;border-radius:1px;}
 .signal i:nth-child(1){height:3px;}
 .signal i:nth-child(2){height:5px;}
 .signal i:nth-child(3){height:7px;}
 .signal i:nth-child(4){height:9px;}
-/* WiFi */
 .wifi{width:15px;height:11px;position:relative;}
 .wifi::before{content:"";position:absolute;inset:0;border:2px solid #000;border-top:none;border-radius:0 0 50% 50%;clip-path:polygon(0 0,100% 0,100% 60%,0 60%);}
-/* 电池 */
 .battery{width:24px;height:11px;border:1px solid #000;border-radius:3px;position:relative;padding:1px;}
 .battery::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:5px;background:#000;border-radius:0 2px 2px 0;}
 .battery i{display:block;height:100%;width:90%;background:#000;border-radius:1px;}
@@ -58,27 +55,57 @@ body{
 .nav .actions{display:flex;gap:22px;font-size:22px;color:#000;}
 .nav .actions span{cursor:pointer;}
 
-/* ============ 聊天列表 ============ */
-.chat-list{flex:1;overflow-y:auto;background:#fff;}
-.chat-list::-webkit-scrollbar{width:0;}
+/* ============ 页面容器 ============ */
+.pages{flex:1;overflow:hidden;position:relative;background:#ededed;}
+.page{position:absolute;inset:0;overflow-y:auto;display:none;background:#ededed;}
+.page.active{display:block;}
+.page::-webkit-scrollbar{width:0;}
 
-/* 会话项 */
+/* ============ 通用列表单元 ============ */
+.cell{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;background:#fff;
+  border-bottom:0.5px solid #e5e5e5;
+  cursor:pointer;
+}
+.cell:active{background:#ececec;}
+.cell .ic-box{
+  width:40px;height:40px;border-radius:8px;flex-shrink:0;
+  display:grid;place-items:center;font-size:20px;color:#fff;
+}
+.cell .nm{flex:1;font-size:16px;color:#111;}
+.cell .arr{color:#c7c7cc;font-size:20px;line-height:1;}
+.cell .right-txt{color:#999;font-size:14px;margin-right:4px;}
+
+/* 分组间隔 */
+.group-gap{height:10px;background:#ededed;}
+/* 字母索引条 */
+.letter-bar{
+  background:#ededed;padding:5px 14px;
+  font-size:13px;color:#888;font-weight:500;
+}
+
+/* ============ 微信页（聊天列表） ============ */
+.search-bar{
+  padding:6px 14px;background:#ededed;
+}
+.search-bar .inner{
+  height:34px;background:#fff;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  gap:5px;color:#999;font-size:14px;
+}
 .session{
   display:flex;align-items:center;gap:12px;
   padding:12px 14px;background:#fff;
   border-bottom:0.5px solid #e5e5e5;
-  cursor:pointer;position:relative;
+  cursor:pointer;
 }
 .session:active{background:#ececec;}
-
-/* 头像 */
 .avatar-wrap{position:relative;flex-shrink:0;}
 .avatar{
   width:48px;height:48px;border-radius:6px;
-  display:grid;place-items:center;
-  background:#3f7bef; /* 微信公众号蓝 */
+  display:grid;place-items:center;font-size:22px;
 }
-/* 红点未读 */
 .red-dot{
   position:absolute;top:-3px;right:-3px;
   min-width:18px;height:18px;
@@ -87,8 +114,6 @@ body{
   display:grid;place-items:center;padding:0 5px;
   border:2px solid #fff;
 }
-
-/* 文字区 */
 .session-main{flex:1;min-width:0;}
 .session-top{display:flex;justify-content:space-between;align-items:baseline;}
 .session-name{font-size:16px;color:#000;font-weight:500;}
@@ -97,6 +122,32 @@ body{
   font-size:13px;color:#999;margin-top:4px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
+
+/* ============ 通讯录 ============ */
+.contacts-list .cell .ic-box{width:40px;height:40px;border-radius:6px;}
+.contact-ava{
+  width:40px;height:40px;border-radius:6px;flex-shrink:0;
+  display:grid;place-items:center;font-size:20px;
+}
+
+/* ============ 发现 ============ */
+.discover-list .cell{padding:12px 14px;}
+
+/* ============ 我 ============ */
+.me-header{
+  display:flex;align-items:center;gap:12px;
+  padding:18px 14px;background:#fff;
+  border-bottom:0.5px solid #e5e5e5;
+}
+.me-avatar{
+  width:60px;height:60px;border-radius:8px;flex-shrink:0;
+  display:grid;place-items:center;font-size:30px;
+  background:#cfe3ff;
+}
+.me-info{flex:1;}
+.me-name{font-size:19px;font-weight:600;color:#111;}
+.me-id{font-size:13px;color:#888;margin-top:4px;}
+.me-qr{color:#c7c7cc;font-size:20px;}
 
 /* ============ 底部Tab栏 ============ */
 .tabbar{
@@ -113,12 +164,6 @@ body{
 .tab .ic{width:25px;height:25px;display:block;line-height:0;}
 .tab .ic svg{width:100%;height:100%;display:block;}
 .tab.active{color:#07c160;}
-/* tab上的小红点 */
-.tab .dot{
-  position:absolute;top:2px;left:50%;margin-left:6px;
-  width:9px;height:9px;background:#fa5151;border-radius:50%;
-  border:1.5px solid #f7f7f7;
-}
 </style>
 </head>
 <body>
@@ -137,55 +182,214 @@ body{
     </div>
   </div>
 
-  <!-- 导航栏 -->
+  <!-- 导航栏（标题随Tab切换） -->
   <div class="nav">
     <div></div>
-    <span class="title">微信</span>
+    <span class="title" id="navTitle">微信</span>
     <div class="actions">
       <span>🔍</span>
       <span>＋</span>
     </div>
   </div>
 
-  <!-- 聊天列表 -->
-  <div class="chat-list">
-    <!-- 公众号会话 -->
-    <div class="session">
-      <div class="avatar-wrap">
-        <div class="avatar">
-          <!-- 微信公众号图标：蓝色底 + 白色书本/叶子 -->
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M14 3 L24 7 V17 C24 21 19 24 14 25 C9 24 4 21 4 17 V7 Z" fill="#fff"/>
-            <path d="M14 7 L20 9.2 V16.8 C20 19.2 17.3 21.3 14 22.2 C10.7 21.3 8 19.2 8 16.8 V9.2 Z" fill="#3f7bef"/>
-            <path d="M14 9.5 L17.5 10.8 V16.2 C17.5 17.8 15.9 19.1 14 19.7 C12.1 19.1 10.5 17.8 10.5 16.2 V10.8 Z" fill="#fff"/>
-          </svg>
+  <!-- 四个页面 -->
+  <div class="pages">
+
+    <!-- ========== 微信页：聊天列表 ========== -->
+    <div class="page active" data-page="wechat">
+      <div class="session">
+        <div class="avatar-wrap">
+          <div class="avatar" style="background:#3f7bef;">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M14 3 L24 7 V17 C24 21 19 24 14 25 C9 24 4 21 4 17 V7 Z" fill="#fff"/>
+              <path d="M14 7 L20 9.2 V16.8 C20 19.2 17.3 21.3 14 22.2 C10.7 21.3 8 19.2 8 16.8 V9.2 Z" fill="#3f7bef"/>
+              <path d="M14 9.5 L17.5 10.8 V16.2 C17.5 17.8 15.9 19.1 14 19.7 C12.1 19.1 10.5 17.8 10.5 16.2 V10.8 Z" fill="#fff"/>
+            </svg>
+          </div>
+          <span class="red-dot"></span>
         </div>
-        <span class="red-dot"></span>
-      </div>
-      <div class="session-main">
-        <div class="session-top">
-          <span class="session-name">公众号</span>
-          <span class="session-time">昨天</span>
+        <div class="session-main">
+          <div class="session-top">
+            <span class="session-name">公众号</span>
+            <span class="session-time">昨天</span>
+          </div>
+          <div class="session-sub">快讯：一诺状态 热搜第一，卫冕冠军AG止步KPL...</div>
         </div>
-        <div class="session-sub">快讯：一诺状态 热搜第一，卫冕冠军AG止步KPL...</div>
       </div>
     </div>
+
+    <!-- ========== 通讯录页 ========== -->
+    <div class="page" data-page="contacts">
+      <div class="search-bar"><div class="inner">🔍 搜索</div></div>
+      <div class="contacts-list">
+        <div class="cell">
+          <div class="ic-box" style="background:#fa9f3c;">👋</div>
+          <span class="nm">新的朋友</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="cell">
+          <div class="ic-box" style="background:#4787ee;">👥</div>
+          <span class="nm">群聊</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="cell">
+          <div class="ic-box" style="background:#f2b23c;">🏷️</div>
+          <span class="nm">标签</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="cell">
+          <div class="ic-box" style="background:#3f7bef;">
+            <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+              <path d="M14 3 L24 7 V17 C24 21 19 24 14 25 C9 24 4 21 4 17 V7 Z" fill="#fff"/>
+              <path d="M14 7 L20 9.2 V16.8 C20 19.2 17.3 21.3 14 22.2 C10.7 21.3 8 19.2 8 16.8 V9.2 Z" fill="#3f7bef"/>
+              <path d="M14 9.5 L17.5 10.8 V16.2 C17.5 17.8 15.9 19.1 14 19.7 C12.1 19.1 10.5 17.8 10.5 16.2 V10.8 Z" fill="#fff"/>
+            </svg>
+          </div>
+          <span class="nm">公众号</span>
+          <span class="arr">›</span>
+        </div>
+
+        <div class="letter-bar">A</div>
+        <div class="cell"><div class="contact-ava" style="background:#cfe3ff;">🐑</div><span class="nm">阿杰</span><span class="arr">›</span></div>
+
+        <div class="letter-bar">B</div>
+        <div class="cell"><div class="contact-ava" style="background:#cfe3ff;">🐑</div><span class="nm">BLGXun</span><span class="arr">›</span></div>
+        <div class="cell"><div class="contact-ava" style="background:#ffd6e8;">🌸</div><span class="nm">BLGKnight</span><span class="arr">›</span></div>
+        <div class="cell"><div class="contact-ava" style="background:#e3d6ff;">👾</div><span class="nm">BLGFlandre</span><span class="arr">›</span></div>
+        <div class="cell"><div class="contact-ava" style="background:#ffe9c4;">🍔</div><span class="nm">BLGON</span><span class="arr">›</span></div>
+        <div class="cell"><div class="contact-ava" style="background:#d5e5f5;">🏔️</div><span class="nm">BLGDaeny</span><span class="arr">›</span></div>
+      </div>
+    </div>
+
+    <!-- ========== 发现页 ========== -->
+    <div class="page" data-page="discover">
+      <div class="discover-list">
+        <div class="group-gap"></div>
+        <div class="cell">
+          <div class="ic-box" style="background:linear-gradient(135deg,#ffd23c,#ff7a3c);">🌈</div>
+          <span class="nm">朋友圈</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="group-gap"></div>
+        <div class="cell">
+          <div class="ic-box" style="background:#4787ee;">🎥</div>
+          <span class="nm">视频号</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="cell">
+          <div class="ic-box" style="background:#07c160;">📡</div>
+          <span class="nm">直播</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="group-gap"></div>
+        <div class="cell">
+          <div class="ic-box" style="background:#5f6ded;">📷</div>
+          <span class="nm">扫一扫</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="cell">
+          <div class="ic-box" style="background:#5f6ded;">📳</div>
+          <span class="nm">摇一摇</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="group-gap"></div>
+        <div class="cell">
+          <div class="ic-box" style="background:#f2b23c;">👁️</div>
+          <span class="nm">看一看</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="cell">
+          <div class="ic-box" style="background:#f2b23c;">🔍</div>
+          <span class="nm">搜一搜</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="group-gap"></div>
+        <div class="cell">
+          <div class="ic-box" style="background:#4787ee;">📍</div>
+          <span class="nm">附近</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="group-gap"></div>
+        <div class="cell">
+          <div class="ic-box" style="background:#ea6245;">🛍️</div>
+          <span class="nm">购物</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="cell">
+          <div class="ic-box" style="background:#5f6ded;">🎮</div>
+          <span class="nm">游戏</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="group-gap"></div>
+        <div class="cell">
+          <div class="ic-box" style="background:#07c160;">🧩</div>
+          <span class="nm">小程序</span>
+          <span class="arr">›</span>
+        </div>
+        <div class="group-gap"></div>
+      </div>
+    </div>
+
+    <!-- ========== 我页 ========== -->
+    <div class="page" data-page="me">
+      <div class="me-header">
+        <div class="me-avatar">🤓</div>
+        <div class="me-info">
+          <div class="me-name">顽皮的自己</div>
+          <div class="me-id">微信号：BLG_fan_1025</div>
+        </div>
+        <span class="me-qr">▦</span>
+      </div>
+      <div class="group-gap"></div>
+      <div class="cell">
+        <div class="ic-box" style="background:#07c160;">💳</div>
+        <span class="nm">服务</span>
+        <span class="arr">›</span>
+      </div>
+      <div class="group-gap"></div>
+      <div class="cell">
+        <div class="ic-box" style="background:#fa9f3c;">⭐</div>
+        <span class="nm">收藏</span>
+        <span class="arr">›</span>
+      </div>
+      <div class="cell">
+        <div class="ic-box" style="background:#4787ee;">🖼️</div>
+        <span class="nm">朋友圈</span>
+        <span class="arr">›</span>
+      </div>
+      <div class="cell">
+        <div class="ic-box" style="background:#f2b23c;">🎟️</div>
+        <span class="nm">卡包</span>
+        <span class="arr">›</span>
+      </div>
+      <div class="cell">
+        <div class="ic-box" style="background:#f2b23c;">😀</div>
+        <span class="nm">表情</span>
+        <span class="arr">›</span>
+      </div>
+      <div class="group-gap"></div>
+      <div class="cell">
+        <div class="ic-box" style="background:#5f6ded;">⚙️</div>
+        <span class="nm">设置</span>
+        <span class="arr">›</span>
+      </div>
+      <div class="group-gap"></div>
+    </div>
+
   </div>
 
   <!-- 底部Tab栏 -->
-  <div class="tabbar">
-    <div class="tab active">
+  <div class="tabbar" id="tabbar">
+    <div class="tab active" data-tab="wechat">
       <span class="ic">
-        <!-- 微信：绿色实心对话气泡 -->
         <svg viewBox="0 0 24 24" fill="none">
           <path d="M5.5 3h13c1.93 0 3.5 1.57 3.5 3.5v7c0 1.93-1.57 3.5-3.5 3.5h-6.2L6 20l.9-2.85C5.14 16.46 4 15.1 4 13.5v-7C4 4.57 5.57 3 7.5 3h-2z" fill="#07c160"/>
         </svg>
       </span>
       <span>微信</span>
     </div>
-    <div class="tab">
+    <div class="tab" data-tab="contacts">
       <span class="ic">
-        <!-- 通讯录：人像 + 三条横线 -->
         <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="8.5" cy="8" r="3.2"/>
           <path d="M3 19c0-3.3 3.5-5 5.5-5s5.5 1.7 5.5 5"/>
@@ -195,11 +399,9 @@ body{
         </svg>
       </span>
       <span>通讯录</span>
-      <span class="dot"></span>
     </div>
-    <div class="tab">
+    <div class="tab" data-tab="discover">
       <span class="ic">
-        <!-- 发现：圆形指南针 -->
         <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.6" stroke-linejoin="round">
           <circle cx="12" cy="12" r="9.5"/>
           <path d="M12 5l4.5 7-4.5 7-4.5-7z" fill="#1a1a1a" stroke="none"/>
@@ -207,11 +409,9 @@ body{
         </svg>
       </span>
       <span>发现</span>
-      <span class="dot"></span>
     </div>
-    <div class="tab">
+    <div class="tab" data-tab="me">
       <span class="ic">
-        <!-- 我：人像 -->
         <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="8" r="3.5"/>
           <path d="M5 19c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/>
@@ -222,6 +422,27 @@ body{
   </div>
 
 </div>
+
+<script>
+// Tab 切换逻辑
+const tabs = document.querySelectorAll('.tab');
+const pages = document.querySelectorAll('.page');
+const navTitle = document.getElementById('navTitle');
+const titles = {wechat:'微信', contacts:'通讯录', discover:'发现', me:'我'};
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const name = tab.dataset.tab;
+    // 切换 active
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    // 切换页面
+    pages.forEach(p => p.classList.toggle('active', p.dataset.page === name));
+    // 切换标题
+    navTitle.textContent = titles[name] || '微信';
+  });
+});
+</script>
 
 </body>
 </html>
