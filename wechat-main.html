@@ -1401,6 +1401,9 @@ function doExit(){
   document.getElementById('groupInfo').classList.remove('show');
   if(isEmbed){
     switchTab('wechat');
+    // 优先通知父页面（手机模拟器）关闭微信、回到桌面；postMessage 跨 file:// 也有效
+    try { window.parent.postMessage({ type:'wechat-exit' }, '*'); } catch(e){}
+    // 兜底：同源直调
     try { window.parent.closeApp('wechat-full'); } catch(e){}
     return;
   }
