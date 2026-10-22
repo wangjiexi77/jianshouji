@@ -6,39 +6,39 @@
 <title>某人的手机 · 沉浸式捡手机</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+html,body{
+  width:100%;height:100%;
+  margin:0;padding:0;
+  overflow:hidden;
+}
 body{
-  min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
   background:linear-gradient(140deg,#0c0714,#150b22,#0b0816);
-  padding:20px;
-  overflow:hidden;
 }
 
-/* iPhone 机身外壳 桌面端可见 */
+/* iPhone 机身外壳：铺满整个窗口，不做任何裁切 */
 .iphone-shell{
   position:relative;
-  width:370px;
-  height:740px;
-  border-radius:54px;
-  padding:12px;
-  background:#70242c; /* 酒红色金属边框 */
-  box-shadow:
-    0 0 0 3px #111,
-    0 40px 100px rgba(0,0,0,0.65);
+  width:100%;
+  height:100%;
+  border-radius:0;
+  padding:0;
+  background:transparent;
+  box-shadow:none;
   display:block;
 }
 @media (max-width:480px){
   .iphone-shell{
-    width:100%;height:100vh;border-radius:0;padding:0;background:transparent;
+    width:100%;height:100vh;height:100dvh;border-radius:0;padding:0;background:transparent;
     box-shadow:none;
   }
 }
 .iphone-screen{
   width:100%;height:100%;
   background:#000;
-  border-radius:42px;
+  border-radius:0;
   overflow:hidden;
   position:relative;
 }
@@ -79,7 +79,7 @@ body{
   width:100%;height:100%;
   background:linear-gradient(160deg,#b89cd8,#b6a4d0,#e8c8d8);
   padding-top:52px;padding-left:18px;padding-right:18px;
-  position:absolute;inset:0;
+  position:absolute;inset:0 0 var(--sysbar-h) 0;
   transition:0.3s ease;
 }
 /* 桌面柔和圆形装饰 */
@@ -121,9 +121,60 @@ body{
 }
 
 
-/* -------- App 通用页面样式 -------- */
+/* ==================== 底部系统栏 ==================== */
+/* 高度 26px，占据屏幕最底部一条空间；App 页面与桌面都让出这 26px，避免遮挡内容 */
+:root{--sysbar-h:26px;}
+.sysbar{
+  position:absolute;left:0;right:0;bottom:0;
+  height:var(--sysbar-h);
+  display:flex;align-items:center;justify-content:space-around;
+  z-index:90;
+  background:rgba(255,255,255,0.72);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-top:.5px solid rgba(0,0,0,0.06);
+}
+.sys-btn{
+  flex:1;height:100%;border:none;background:transparent;
+  display:grid;place-items:center;color:#8a8a8e;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.sys-btn svg{width:17px;height:17px;display:block;}
+.sys-btn:active{color:#07c160;background:rgba(0,0,0,0.04);}
+
+/* 后台多任务 */
+.recents{
+  position:absolute;inset:0 0 var(--sysbar-h) 0;
+  z-index:85;display:none;
+  background:rgba(20,20,24,0.55);
+  -webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+  padding:40px 16px 24px;
+}
+.recents.show{display:block;}
+.recents-inner{display:flex;gap:12px;overflow-x:auto;height:100%;align-items:center;padding-bottom:8px;}
+.app-card{
+  flex:0 0 46%;height:72%;
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 10px 26px rgba(0,0,0,0.4);
+  display:flex;flex-direction:column;cursor:pointer;
+  transition:transform .18s ease;
+}
+.app-card:active{transform:scale(.96);}
+.app-card .cap{
+  height:34%;display:grid;place-items:center;
+  font-size:34px;color:#fff;font-weight:600;
+}
+.app-card .cap.wx{background:linear-gradient(160deg,#5BE584,#1FBE3C);}
+.app-card .cap.al{background:linear-gradient(160deg,#ffd23c,#ff9f43);}
+.app-card .cap.nt{background:linear-gradient(160deg,#ffe066,#ffc93c);}
+.app-card .cap.cl{background:linear-gradient(160deg,#5BE584,#2ecc71);}
+.app-card .cap.cd{background:linear-gradient(160deg,#ff6b6b,#ee5253);}
+.app-card .cap.sf{background:linear-gradient(160deg,#7ec8ff,#3b82f6);}
+.app-card .nm{padding:8px 10px;font-size:12.5px;color:#333;text-align:center;}
+.recents .empty{
+  color:#fff;font-size:14px;opacity:.8;margin:auto;
+}
 .app-screen{
-  position:absolute;inset:0;
+  position:absolute;inset:0 0 var(--sysbar-h) 0;
   background:#f6f7fa;
   transform:translateX(100%);
   transition:transform 0.3s cubic-bezier(0.2,0,0.2,1);
@@ -426,7 +477,7 @@ body{
 
       <!-- ============ 微信 · 完整版（我的产物微信，iframe 嵌入） ============ -->
       <div class="app-screen" id="app-wechat-full">
-        <iframe class="wx-full-frame" src="wechat-main.html?embed=1&v=4" title="微信"></iframe>
+        <iframe class="wx-full-frame" src="wechat-main.html?embed=1&v=5" title="微信"></iframe>
       </div>
 
       <!-- ============ 微信 · 聊天列表 ============ -->
@@ -920,17 +971,92 @@ body{
         <div class="lock-hint" onclick="goPasscode()">向上轻扫以解锁</div>
       </div>
 
-      <div class="home-indicator"></div>
+      <!-- 底部系统栏：返回 / 主屏幕 / 后台 -->
+      <div class="sysbar">
+        <button class="sys-btn" onclick="sysBack()" title="返回">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>
+        </button>
+        <button class="sys-btn" onclick="sysHome()" title="主屏幕">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5L12 4.2l7.5 6.3"/><path d="M6.6 9.4v10.1h10.8V9.4"/></svg>
+        </button>
+        <button class="sys-btn" onclick="sysRecents()" title="后台">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.2" y="6.4" width="12.4" height="12.4" rx="2.4"/><path d="M8 3.6h9.4a3 3 0 0 1 3 3V16"/></svg>
+        </button>
+      </div>
+
+      <!-- 后台多任务卡片 -->
+      <div class="recents" id="recentsPage" onclick="hideRecents()">
+        <div class="recents-inner" id="recentsInner" onclick="event.stopPropagation()"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
+/* 已打开过的 App 栈（用于返回 / 后台列表） */
+var appStack = [];
 function openApp(name){
-  document.getElementById('app-'+name).classList.add('active');
+  var el = document.getElementById('app-' + name);
+  if(!el) return;
+  el.classList.add('active');
+  if(appStack[appStack.length - 1] !== name) appStack.push(name);
+  hideRecents();
 }
 function closeApp(name){
-  document.getElementById('app-'+name).classList.remove('active');
+  var el = document.getElementById('app-' + name);
+  if(el) el.classList.remove('active');
+  var i = appStack.indexOf(name);
+  if(i > -1) appStack.splice(i, 1);
+}
+
+/* ---------- 底部系统栏三个按钮 ---------- */
+// 返回：关闭最近打开的那个 App 页面
+function sysBack(){
+  if(appStack.length){
+    closeApp(appStack[appStack.length - 1]);
+  }
+}
+// 主屏幕：关闭全部 App，回到桌面
+function sysHome(){
+  appStack.slice().forEach(function(n){ closeApp(n); });
+  hideRecents();
+}
+// 后台：列出所有已打开的 App 卡片
+var APP_META = {
+  'wechat-full':{t:'微信', c:'wx', s:'微'},
+  'wechat':{t:'微信', c:'wx', s:'微'},
+  'wechat-group':{t:'群聊', c:'wx', s:'群'},
+  'wechat-chat':{t:'聊天', c:'wx', s:'聊'},
+  'wechat-contacts':{t:'通讯录', c:'wx', s:'联'},
+  'wechat-discover':{t:'发现', c:'wx', s:'现'},
+  'wechat-moments':{t:'朋友圈', c:'wx', s:'圈'},
+  'wechat-me':{t:'我', c:'wx', s:'我'},
+  'wechat-groupinfo':{t:'群信息', c:'wx', s:'群'},
+  'wechat-transfer':{t:'转账', c:'wx', s:'转'},
+  'album':{t:'照片', c:'al', s:'照'},
+  'note':{t:'备忘录', c:'nt', s:'记'},
+  'call':{t:'电话', c:'cl', s:'话'},
+  'cal':{t:'日历', c:'cd', s:'历'},
+  'safari':{t:'Safari', c:'sf', s:'S'}
+};
+function sysRecents(){
+  var inner = document.getElementById('recentsInner');
+  if(!appStack.length){
+    inner.innerHTML = '<div class="empty">没有正在运行的应用</div>';
+  } else {
+    inner.innerHTML = appStack.map(function(n){
+      var m = APP_META[n] || {t:n, c:'wx', s:'A'};
+      return '<div class="app-card" onclick="openApp(\'' + n + '\')">' +
+               '<div class="cap ' + m.c + '">' + m.s + '</div>' +
+               '<div class="nm">' + m.t + '</div>' +
+             '</div>';
+    }).join('');
+  }
+  document.getElementById('recentsPage').classList.add('show');
+}
+function hideRecents(){
+  var p = document.getElementById('recentsPage');
+  if(p) p.classList.remove('show');
 }
 /* 监听完整版微信（iframe）发来的「退出微信」消息，回到手机桌面
    用 postMessage 而非直接调用父页面函数，file:// 直接打开时也能生效 */
@@ -953,6 +1079,9 @@ function swipeClose(name, dir){
     scr.classList.remove('out-left');
     scr.classList.remove('out-right');
     scr.classList.remove('active');
+    // 同步从后台列表移除
+    var i = appStack.indexOf(name);
+    if(i > -1) appStack.splice(i, 1);
   }, 270);
 }
 
