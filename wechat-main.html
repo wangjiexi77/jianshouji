@@ -34,8 +34,8 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .battery i{display:block;height:100%;width:90%;background:#000;border-radius:1px;}
 
 /* ============ 导航栏 ============ */
-.nav{flex-shrink:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#ededed;}
-.nav .title{font-size:17px;font-weight:600;color:#000;}
+.nav{flex-shrink:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#ededed;position:relative;}
+.nav .title{position:absolute;left:50%;transform:translateX(-50%);font-size:17px;font-weight:600;color:#000;}
 .nav .actions{display:flex;gap:22px;font-size:22px;color:#000;}
 .nav .actions span{cursor:pointer;}
 
@@ -49,6 +49,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .cell{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border-bottom:0.5px solid #e5e5e5;cursor:pointer;}
 .cell:active{background:#ececec;}
 .cell .ic-box{width:40px;height:40px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;font-size:20px;color:#fff;}
+.cell .ic-box svg{width:23px;height:23px;display:block;}
 .cell .nm{flex:1;font-size:16px;color:#111;}
 .cell .arr{color:#c7c7cc;font-size:20px;line-height:1;}
 .group-gap{height:10px;background:#ededed;}
@@ -146,23 +147,21 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .gi-cell .lbl{color:#111;}
 .gi-cell .val{color:#999;font-size:14px;}
 
-/* ============ 消息长按菜单 ============ */
+/* ============ 消息长按菜单（深色九宫格） ============ */
 .ctx-mask{position:absolute;inset:0;z-index:30;display:none;}
 .ctx-mask.show{display:block;}
 .ctx-menu{
-  position:absolute;z-index:31;width:250px;background:#fff;border-radius:14px;
-  padding:6px;display:none;overflow:hidden;
-  box-shadow:0 14px 44px rgba(0,0,0,.18),0 2px 10px rgba(0,0,0,.08);
+  position:absolute;z-index:31;display:none;padding:16px 6px 12px;border-radius:14px;
+  background:rgba(40,40,42,.97);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  box-shadow:0 18px 60px rgba(0,0,0,.45),0 2px 10px rgba(0,0,0,.18);
 }
 .ctx-menu.show{display:block;}
-.ctx-item{height:44px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:16px;color:#111;border-radius:8px;cursor:pointer;}
-.ctx-item:active{background:#f2f2f2;}
-.ctx-item.primary{background:#07c160;color:#fff;}
-.ctx-item.primary:active{background:#06ad56;}
-.ctx-item.danger{color:#fa5151;}
-.ctx-item .ic{width:18px;height:18px;line-height:0;flex-shrink:0;}
-.ctx-item .ic svg{width:100%;height:100%;display:block;}
-.ctx-div{height:.5px;background:#e5e5e5;margin:4px 12px;}
+.ctx-grid{display:grid;grid-template-columns:repeat(5,52px);gap:16px 0;}
+.ctx-cell{display:flex;flex-direction:column;align-items:center;gap:8px;color:#f5f5f5;font-size:11px;line-height:1;cursor:pointer;padding:2px 0;}
+.ctx-cell:active{opacity:.55;}
+.ctx-cell .ic{width:24px;height:24px;flex-shrink:0;}
+.ctx-cell .ic svg{width:100%;height:100%;display:block;}
 
 /* 气泡内译文 / 引用 */
 .msg-trans{margin-top:6px;padding-top:6px;border-top:.5px dashed rgba(0,0,0,.18);color:#666;font-size:13px;}
@@ -204,6 +203,46 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 .picker .plist{overflow-y:auto;}
 .picker .pitem{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:.5px solid #f2f2f2;font-size:15px;color:#111;}
 .picker .pava{width:38px;height:38px;border-radius:5px;display:grid;place-items:center;overflow:hidden;font-size:18px;flex-shrink:0;}
+.picker .pava svg{width:22px;height:22px;}
+.picker .pava img{width:100%;height:100%;object-fit:cover;}
+
+/* ============ 退出微信 ============ */
+/* “我”页面中的退出入口（居中的红字） */
+.exit-cell{justify-content:center;}
+.exit-cell .exit-label{flex:none;font-size:16px;color:#fa5151;text-align:center;}
+
+/* 确认弹窗 */
+.dialog{position:absolute;inset:0;z-index:90;display:none;place-items:center;}
+.dialog.show{display:grid;}
+.dialog .dlg-mask{position:absolute;inset:0;background:rgba(0,0,0,.42);}
+.dialog .dlg-card{
+  position:relative;width:78%;max-width:300px;background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,.28);animation:dlgIn .18s ease-out;
+}
+@keyframes dlgIn{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+.dialog .dlg-title{padding:22px 20px 8px;text-align:center;font-size:17px;font-weight:600;color:#111;}
+.dialog .dlg-msg{padding:0 24px 22px;text-align:center;font-size:14px;line-height:1.5;color:#888;}
+.dialog .dlg-btns{display:flex;border-top:.5px solid #e5e5e5;}
+.dialog .dlg-btn{flex:1;height:48px;font-size:17px;border:none;background:#fff;cursor:pointer;}
+.dialog .dlg-btn:active{background:#f2f2f2;}
+.dialog .dlg-btn.cancel{color:#111;border-right:.5px solid #e5e5e5;}
+.dialog .dlg-btn.ok{color:#fa5151;font-weight:600;}
+
+/* 退出后的黑屏 */
+.exit-screen{
+  position:absolute;inset:0;z-index:95;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;background:#111;
+}
+.exit-screen.show{display:flex;}
+.exit-screen .exit-logo{width:74px;height:74px;margin-bottom:10px;}
+.exit-screen .exit-logo svg{width:100%;height:100%;}
+.exit-screen .exit-title{color:#fff;font-size:18px;font-weight:600;}
+.exit-screen .exit-sub{color:rgba(255,255,255,.45);font-size:13px;}
+.exit-screen .exit-reenter{
+  margin-top:26px;padding:10px 30px;border-radius:22px;border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.1);color:#fff;font-size:15px;cursor:pointer;
+}
+.exit-screen .exit-reenter:active{background:rgba(255,255,255,.2);}
 </style>
 </head>
 <body>
@@ -289,6 +328,9 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
       <div class="group-gap"></div>
       <div class="cell"><div class="ic-box" style="background:#5f6ded;">⚙️</div><span class="nm">设置</span><span class="arr">›</span></div>
       <div class="group-gap"></div>
+      <!-- 退出微信 -->
+      <div class="cell exit-cell" onclick="askExit()"><span class="exit-label">退出微信</span></div>
+      <div class="group-gap"></div>
     </div>
 
   </div>
@@ -330,35 +372,54 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
     <div class="gi-body" id="giBody"></div>
   </div>
 
-  <!-- 长按菜单 -->
+  <!-- 长按菜单（深色九宫格，仿微信原版） -->
   <div class="ctx-mask" id="ctxMask" onclick="hideCtxMenu()"></div>
   <div class="ctx-menu" id="ctxMenu">
-    <div class="ctx-item primary" onclick="ctxAction('copy')">复制</div>
-    <div class="ctx-item" onclick="ctxAction('read')">放大阅读</div>
-    <div class="ctx-item" onclick="ctxAction('translate')">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h8M7 4v2M9.5 6c0 4-3 7-6.5 8"/><path d="M4 9c1.5 2.5 3.8 4 6 4.6"/><path d="M13 20l4-10 4 10"/><path d="M14.6 16h4.8"/></svg></span>
-      <span>翻译</span>
-    </div>
-    <div class="ctx-item" onclick="ctxAction('search')">搜一搜</div>
-    <div class="ctx-div"></div>
-    <div class="ctx-item" onclick="ctxAction('forward')">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17c2-8 6-10 10-10"/><path d="M11 4l4 3-4 3"/></svg></span>
-      <span>转发…</span>
-    </div>
-    <div class="ctx-item" onclick="ctxAction('fav')">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6" stroke-linejoin="round"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg></span>
-      <span>收藏</span>
-    </div>
-    <div class="ctx-item" onclick="ctxAction('multi')">多选</div>
-    <div class="ctx-item" onclick="ctxAction('remind')">提醒</div>
-    <div class="ctx-item" onclick="ctxAction('quote')">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.7" stroke-linecap="round"><path d="M9 6C6.2 6 4 8.2 4 11s2.2 5 5 5c.6 0 1-.4 1-1V6z" fill="#111" stroke="none"/><path d="M19 6c-2.8 0-5 2.2-5 5s2.2 5 5 5c.6 0 1-.4 1-1V6z" fill="#111" stroke="none"/></svg></span>
-      <span>引用</span>
-    </div>
-    <div class="ctx-div"></div>
-    <div class="ctx-item danger" onclick="ctxAction('delete')">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fa5151" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg></span>
-      <span>删除</span>
+    <div class="ctx-grid">
+      <div class="ctx-cell" onclick="ctxAction('copy')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><rect x="8" y="3" width="12" height="15" rx="2"/><path d="M16 21H6a2 2 0 0 1-2-2V7"/></svg></span>
+        <span>复制</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('forward')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17c1.5-7 6-9.5 12-9.5"/><path d="M12 3.5L16.5 7.5 12 11.5"/></svg></span>
+        <span>转发</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('fav')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z"/><path d="M4 7.2L12 11.4l8-4.2M12 11.4V21"/></svg></span>
+        <span>收藏</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('delete')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/><path d="M10 11v5.5M14 11v5.5"/></svg></span>
+        <span>删除</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('multi')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.5 6l1.4 1.4L7.5 4.8M3.5 12l1.4 1.4 2.6-2.6M3.5 18l1.4 1.4 2.6-2.6"/></svg></span>
+        <span>多选</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('quote')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="#fff"><path d="M9.5 5.5C6 6.3 4 9 4 12.2 4 15 5.7 17 8.2 17c1.9 0 3.3-1.3 3.3-3.2 0-1.8-1.2-3-2.9-3-.3 0-.6 0-.9.1.3-1.8 1.5-3 3.3-3.7zM20 5.5c-3.5.8-5.5 3.5-5.5 6.7 0 2.8 1.7 4.8 4.2 4.8 1.9 0 3.3-1.3 3.3-3.2 0-1.8-1.2-3-2.9-3-.3 0-.6 0-.9.1.3-1.8 1.5-3 3.3-3.7z"/></svg></span>
+        <span>引用</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('remind')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a5.5 5.5 0 0 1 5.5 5.5v4l1.5 3H5l1.5-3v-4A5.5 5.5 0 0 1 12 3.5z"/><path d="M10 19.5a2 2 0 0 0 4 0"/></svg></span>
+        <span>提醒</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('search')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></span>
+        <span>搜一搜</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('listen')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13.5" width="4" height="6.5" rx="1.6"/><rect x="17" y="13.5" width="4" height="6.5" rx="1.6"/></svg></span>
+        <span>从当前听</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('translate')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5h8M7 3.5v2M9.5 5.5c0 4-3 7-6.5 8"/><path d="M4 8.5c1.4 2.4 3.6 4 6 4.6"/><path d="M13 20l4-9.5 4 9.5"/><path d="M14.6 16.5h4.8"/></svg></span>
+        <span>翻译</span>
+      </div>
+      <div class="ctx-cell" onclick="ctxAction('read')">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></span>
+        <span>放大阅读</span>
+      </div>
     </div>
   </div>
 
@@ -379,6 +440,29 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 
   <!-- 轻提示 -->
   <div class="toast" id="toast"></div>
+
+  <!-- 退出确认弹窗 -->
+  <div class="dialog" id="exitDialog">
+    <div class="dlg-mask"></div>
+    <div class="dlg-card">
+      <div class="dlg-title">退出微信</div>
+      <div class="dlg-msg">退出后将无法接收新消息，确定要退出吗？</div>
+      <div class="dlg-btns">
+        <button class="dlg-btn cancel" onclick="closeExitDialog()">取消</button>
+        <button class="dlg-btn ok" onclick="doExit()">退出</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 退出后的黑屏 -->
+  <div class="exit-screen" id="exitScreen">
+    <div class="exit-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"><path d="M9.2 4C5.3 4 2.2 6.6 2.2 9.8c0 1.9 1.1 3.6 2.8 4.7l-.7 2.1 2.4-1.2c.8.2 1.6.3 2.5.3h.4a5.9 5.9 0 0 1-.2-1.6c0-3.2 3.1-5.8 6.9-5.8h.5C16 6.1 12.9 4 9.2 4z"/><path d="M16.3 10.1c-3.1 0-5.6 2-5.6 4.5 0 1.5.9 2.8 2.2 3.6l-.5 1.7 1.9-.9c.6.2 1.3.2 2 .2 3.1 0 5.6-2 5.6-4.6 0-2.5-2.5-4.5-5.6-4.5z" fill="#fff" stroke="none"/></svg>
+    </div>
+    <div class="exit-title">微信已退出</div>
+    <div class="exit-sub">已安全退出当前账号</div>
+    <button class="exit-reenter" onclick="reenterWechat()">重新进入微信</button>
+  </div>
 
   <!-- 底部Tab栏 -->
   <div class="tabbar" id="tabbar">
@@ -592,11 +676,19 @@ function renderWechatList(){
 function renderContacts(){
   const box = document.getElementById('pageContacts');
   let html = '<div class="search-bar"><div class="inner">🔍 搜索</div></div><div class="contacts-list">';
-  // 顶部快捷入口
-  html += `<div class="cell"><div class="ic-box" style="background:#fa9f3c;">👋</div><span class="nm">新的朋友</span><span class="arr">›</span></div>`;
-  html += `<div class="cell"><div class="ic-box" style="background:#4787ee;">👥</div><span class="nm">群聊</span><span class="arr">›</span></div>`;
-  html += `<div class="cell"><div class="ic-box" style="background:#f2b23c;">🏷️</div><span class="nm">标签</span><span class="arr">›</span></div>`;
-  html += `<div class="cell"><div class="ic-box" style="background:#3f7bef;">📘</div><span class="nm">公众号</span><span class="arr">›</span></div>`;
+  // 顶部快捷入口（图标为微信原版风格：彩色底 + 白色线框图形）
+  html += `<div class="cell"><div class="ic-box" style="background:linear-gradient(135deg,#ffb340,#fa8b28);">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="3.2"/><path d="M4 19c0-3.1 2.7-5 6-5"/><path d="M17.5 13.5v5M15 16h5"/></svg>
+  </div><span class="nm">新的朋友</span><span class="arr">›</span></div>`;
+  html += `<div class="cell"><div class="ic-box" style="background:linear-gradient(135deg,#2ad06a,#07c160);">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 18.5c0-3 2.5-4.6 5.5-4.6s5.5 1.6 5.5 4.6"/><circle cx="17" cy="9.5" r="2.3"/><path d="M16 14c3 0 4.8 1.3 4.8 3.6"/></svg>
+  </div><span class="nm">群聊</span><span class="arr">›</span></div>`;
+  html += `<div class="cell"><div class="ic-box" style="background:linear-gradient(135deg,#f7c53c,#f2a11e);">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 10.2v4.2a1.6 1.6 0 0 0 1.6 1.6h1.4L12 20V4L6.8 8.4H5.4a1.6 1.6 0 0 0-1.6 1.6z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+  </div><span class="nm">标签</span><span class="arr">›</span></div>`;
+  html += `<div class="cell"><div class="ic-box" style="background:linear-gradient(135deg,#4d8bf5,#2f6fe0);">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h6.5L18 11v8.5H5z"/><path d="M11.5 4.5V11H18"/><path d="M8 15h6"/></svg>
+  </div><span class="nm">公众号</span><span class="arr">›</span></div>`;
   // 按首字母分组
   const groups = {};
   friends.forEach(f => {
@@ -743,17 +835,16 @@ const tabs = document.querySelectorAll('.tab');
 const pages = document.querySelectorAll('.page');
 const navTitle = document.getElementById('navTitle');
 const titles = {wechat:'微信', contacts:'通讯录', discover:'发现', me:'我'};
+// 切换底部 Tab（点按与程序调用共用）
+function switchTab(name){
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  pages.forEach(p => p.classList.toggle('active', p.dataset.page === name));
+  navTitle.textContent = titles[name] || '微信';
+  closeChat();
+  closeGroupInfo();
+}
 tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const name = tab.dataset.tab;
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    pages.forEach(p => p.classList.toggle('active', p.dataset.page === name));
-    navTitle.textContent = titles[name] || '微信';
-    // 关闭可能打开的聊天详情
-    closeChat();
-    closeGroupInfo();
-  });
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
 });
 
 /* ==================== 消息长按菜单 ==================== */
@@ -783,11 +874,12 @@ function showCtxMenu(bubbleEl){
   mask.classList.add('show');
   menu.classList.add('show');
   const mw = menu.offsetWidth, mh = menu.offsetHeight;
-  // 优先贴着气泡左侧，再做边界收拢
-  let left = br.left - dr.left - 16;
-  left = Math.max(8, Math.min(left, dr.width - mw - 8));
-  let top = br.top - dr.top - 24;
-  top = Math.max(56, Math.min(top, dr.height - mh - 12));
+  // 水平居中
+  let left = (dr.width - mw) / 2;
+  left = Math.max(6, Math.min(left, dr.width - mw - 6));
+  // 锚定气泡所在高度，再做边界收拢
+  let top = br.top - dr.top + br.height/2 - mh/2;
+  top = Math.max(52, Math.min(top, dr.height - mh - 14));
   menu.style.left = left + 'px';
   menu.style.top = top + 'px';
 }
@@ -814,6 +906,7 @@ function ctxAction(action){
     case 'fav':       saveFav(c, m); break;
     case 'multi':     enterSelect(mi); break;
     case 'remind':    toast('已设置提醒：1 小时后'); break;
+    case 'listen':    playText(m.text); break;
     case 'quote':     setQuote(m); break;
     case 'delete':    c.messages.splice(mi, 1); renderChatBody(); toast('已删除'); break;
   }
@@ -836,6 +929,18 @@ function fallbackCopy(text){
   ta.select();
   try { document.execCommand('copy'); } catch(e){}
   document.body.removeChild(ta);
+}
+
+/* ---------- 从当前听（语音朗读） ---------- */
+function playText(text){
+  if(!('speechSynthesis' in window)){ toast('当前浏览器不支持朗读'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  u.rate = 1;
+  u.onend = () => toast('朗读结束');
+  window.speechSynthesis.speak(u);
+  toast('正在朗读…');
 }
 
 /* ---------- 放大阅读 ---------- */
@@ -997,6 +1102,31 @@ function multiForward(){
     showCtxMenu(bubble);
   });
 })();
+
+/* ==================== 退出微信 ==================== */
+// 弹出确认框
+function askExit(){
+  document.getElementById('exitDialog').classList.add('show');
+}
+// 取消
+function closeExitDialog(){
+  document.getElementById('exitDialog').classList.remove('show');
+}
+// 确认退出：收起所有浮层，显示黑屏
+function doExit(){
+  closeExitDialog();
+  closeChat();
+  hideCtxMenu();
+  closeForward();
+  closeRead();
+  document.getElementById('groupInfo').classList.remove('show');
+  document.getElementById('exitScreen').classList.add('show');
+}
+// 重新进入：回到微信首页
+function reenterWechat(){
+  document.getElementById('exitScreen').classList.remove('show');
+  switchTab('wechat');
+}
 
 /* ==================== 初始化 ==================== */
 renderWechatList();
