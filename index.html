@@ -140,6 +140,8 @@ body{
   box-shadow:0 3px 12px rgba(0,0,0,0.12);
 }
 .app-icon svg{display:block;}
+/* 图片类图标（B站/小红书/微博/抖音/美团）：铺满圆角方块 */
+.app-icon img{width:100%;height:100%;border-radius:14px;object-fit:cover;display:block;}
 .app-name{
   font-size:11px;color:#1a1a1a;
 }
@@ -305,7 +307,16 @@ body{
 
 /* 相册网格 */
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;}
-.photo-cell{aspect-ratio:1;border-radius:6px;display:grid;place-items:center;font-size:32px;}
+.photo-cell{aspect-ratio:1;border-radius:4px;overflow:hidden;background:#e9e9ec;display:grid;place-items:center;font-size:32px;cursor:pointer;}
+.photo-cell img{width:100%;height:100%;object-fit:cover;display:block;}
+/* 照片全屏查看 */
+.photo-viewer{
+  position:absolute;inset:0;z-index:200;background:#000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .22s ease;
+}
+.photo-viewer.show{opacity:1;pointer-events:auto;}
+.photo-viewer img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
 
 /* 聊天气泡旁头像 */
 .msg-avatar{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:16px;flex-shrink:0;}
@@ -890,17 +901,23 @@ body{
         </div>
         <div class="app-content" style="padding:8px;">
           <div class="photo-grid">
-            <div class="photo-cell" style="background:linear-gradient(135deg,#a8e063,#56ab2f);">🐱</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#89f7fe,#66a6ff);">⌨️</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#fbc2eb,#a6c1ee);">🎂</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#fddb92,#d1fdff);">🌇</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#e0c3fc,#8ec5fc);">📚</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#fccb90,#d57eeb);">🧋</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#a1c4fd,#c2e9fb);">🏫</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#ffecd2,#fcb69f);">🍰</div>
-            <div class="photo-cell" style="background:linear-gradient(135deg,#d4fc79,#96e6a1);">🎈</div>
+            <div class="photo-cell" onclick="openPhoto(1)"><img src="photos/p1.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(2)"><img src="photos/p2.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(3)"><img src="photos/p3.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(4)"><img src="photos/p4.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(5)"><img src="photos/p5.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(6)"><img src="photos/p6.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(7)"><img src="photos/p7.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(8)"><img src="photos/p8.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(9)"><img src="photos/p9.jpg" alt=""></div>
+            <div class="photo-cell" onclick="openPhoto(10)"><img src="photos/p10.jpg" alt=""></div>
           </div>
         </div>
+      </div>
+
+      <!-- 照片全屏查看 -->
+      <div class="photo-viewer" id="photoViewer" onclick="closePhoto()">
+        <img id="photoViewerImg" src="" alt="">
       </div>
 
       <!-- ============ 备忘录 ============ -->
@@ -1082,6 +1099,15 @@ function closeApp(name){
   if(i > -1) appStack.splice(i, 1);
 }
 
+/* ==================== 照片全屏查看 ==================== */
+function openPhoto(i){
+  document.getElementById('photoViewerImg').src = 'photos/p' + i + '.jpg';
+  document.getElementById('photoViewer').classList.add('show');
+}
+function closePhoto(){
+  document.getElementById('photoViewer').classList.remove('show');
+}
+
 /* ==================== iOS 桌面排版（按 iPhone 出厂布局） ==================== */
 // 说明：已存在的 6 个图标（微信/照片/备忘录/电话/日历/Safari）直接复用原 DOM 节点，
 // 外观完全不做改动，只调整它们在桌面上的排列位置。
@@ -1093,14 +1119,20 @@ function makeIOSItem(cfg){
   d.className = 'app-item';
   d.onclick = function(){ cfg.app ? openApp(cfg.app) : notifyIOS(cfg.n); };
   var id = 'iosg' + (++_gid);
-  d.innerHTML =
-    '<div class="app-icon"><svg width="56" height="56" viewBox="0 0 56 56">' +
-      '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0" stop-color="' + cfg.c1 + '"/><stop offset="1" stop-color="' + cfg.c2 + '"/>' +
-      '</linearGradient></defs>' +
-      '<rect width="56" height="56" rx="14" fill="url(#' + id + ')"/>' + (cfg.s || '') +
-    '</svg></div>' +
-    '<div class="app-name">' + (cfg.n || '') + '</div>';
+  var iconHTML;
+  if(cfg.img){
+    // 使用图片图标（B站 / 小红书 / 微博 / 抖音 / 美团）
+    iconHTML = '<div class="app-icon"><img class="app-icon-img" src="' + cfg.img + '" alt="' + (cfg.n || '') + '"></div>';
+  }else{
+    iconHTML =
+      '<div class="app-icon"><svg width="56" height="56" viewBox="0 0 56 56">' +
+        '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0" stop-color="' + cfg.c1 + '"/><stop offset="1" stop-color="' + cfg.c2 + '"/>' +
+        '</linearGradient></defs>' +
+        '<rect width="56" height="56" rx="14" fill="url(#' + id + ')"/>' + (cfg.s || '') +
+      '</svg></div>';
+  }
+  d.innerHTML = iconHTML + '<div class="app-name">' + (cfg.n || '') + '</div>';
   return d;
 }
 
@@ -1210,22 +1242,12 @@ var IOS_GRID = [
      '<g stroke="#FFF24A" stroke-width="3" stroke-linecap="round" fill="none">' +
      '<path d="M26 36V20.5l15-3.2V32"/></g>'},
   // ---- 第三方常用 App ----
-  {n:'抖音', c1:'#2A2A2E', c2:'#0B0B0D',
-   s:'<path d="M30.5 15v16.4a5.6 5.6 0 1 1-5.6-5.6" fill="none" stroke="#25F4EE" stroke-width="3.2" stroke-linecap="round"/>' +
-     '<path d="M30.5 13v16.4a5.6 5.6 0 1 1-5.6-5.6" fill="none" stroke="#FE2C55" stroke-width="3.2" stroke-linecap="round" transform="translate(1.6,1.6)"/>' +
-     '<path d="M36 15.5c1.4 2.8 3.6 4.2 6 4.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>'},
-  {n:'小红书', c1:'#FF2E4D', c2:'#E01B34',
-   s:'<text x="28" y="25.5" font-size="12.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">小红</text>' +
-     '<text x="28" y="41" font-size="12.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">书</text>'},
-  {n:'哔哩哔哩', c1:'#FF9AC1', c2:'#FB7299',
-   s:'<rect x="12.5" y="21" width="31" height="21" rx="5.5" fill="#fff"/>' +
-     '<path d="M19 15.5l5 5.5M37 15.5l-5 5.5" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>' +
-     '<g fill="#FB7299"><circle cx="22.5" cy="30.5" r="2.1"/><circle cx="33.5" cy="30.5" r="2.1"/></g>' +
-     '<path d="M24.5 35.5h7" stroke="#FB7299" stroke-width="2" stroke-linecap="round"/>'},
-  {n:'美团', c1:'#FFE03A', c2:'#FFC300',
-   s:'<text x="28" y="37" font-size="21" font-weight="800" fill="#1A1A1A" text-anchor="middle" font-family="sans-serif">美团</text>'},
-  {n:'微博', c1:'#FF8A3D', c2:'#F5462C',
-   s:'<text x="28" y="36" font-size="19" font-weight="800" fill="#fff" text-anchor="middle" font-family="sans-serif">微博</text>'}
+  // 以下 5 个第三方 App 使用用户提供的官方图标图片
+  {n:'抖音', img:'icons/douyin.jpg'},
+  {n:'小红书', img:'icons/xhs.jpg'},
+  {n:'哔哩哔哩', img:'icons/bilibili.jpg'},
+  {n:'美团', img:'icons/meituan.jpg'},
+  {n:'微博', img:'icons/weibo.jpg'}
 ];
 
 // Dock（iOS 固定 4 个）
