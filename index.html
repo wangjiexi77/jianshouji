@@ -78,10 +78,33 @@ body{
 .home-page{
   width:100%;height:100%;
   background:linear-gradient(160deg,#b89cd8,#b6a4d0,#e8c8d8);
-  padding:52px 18px 104px;
+  padding:0;
+  overflow:hidden;
   position:absolute;inset:0 0 var(--sysbar-h) 0;
   transition:0.3s ease;
 }
+/* 三面桌面：横向排列，整体左右平移切换 */
+.pages{
+  display:flex;height:100%;width:300%;
+  transition:transform .32s cubic-bezier(.2,0,.2,1);
+  will-change:transform;
+}
+.page{
+  width:33.3333%;flex:0 0 33.3333%;height:100%;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:52px 18px 104px;
+}
+/* 页码小圆点 */
+.page-dots{
+  position:absolute;left:0;right:0;bottom:122px;
+  display:flex;justify-content:center;gap:7px;z-index:6;
+}
+.page-dots i{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(255,255,255,.45);
+  transition:background .2s;
+}
+.page-dots i.on{background:#fff;}
 /* 桌面柔和圆形装饰 */
 .home-page::before,.home-page::after{
   content:"";
@@ -96,9 +119,10 @@ body{
   width:180px;height:180px;bottom:120px;left:-30px;
 }
 .status-row{
+  position:absolute;left:0;right:0;top:0;z-index:5;
+  padding:18px 20px 0;
   display:flex;justify-content:space-between;
   color:#222;font-size:13px;font-weight:500;
-  margin-bottom:30px;
 }
 .app-grid{
   display:grid;
@@ -129,8 +153,7 @@ body{
   filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));
   transition:transform .12s ease, opacity .12s ease;
 }
-/* 桌面可上下滚动（图标较多时） */
-.home-page{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+/* Dock 与页码固定在桌面容器上，页面自身上下滚动 */
 /* 底部 Dock：毛玻璃托盘，固定 4 个图标 */
 .dock{
   position:fixed;left:10px;right:10px;bottom:38px;
@@ -392,6 +415,9 @@ body{
           <span id="clock">21:47</span>
           <span>5G&nbsp;&nbsp;🔋</span>
         </div>
+        <!-- 三面桌面：第 1 面为原始容器（下方 JS 会把全部图标平均分到三面） -->
+        <div class="pages" id="pages">
+        <div class="page">
         <div class="app-grid" id="appGrid">
           <div class="app-item" data-app="wechat-full" onclick="openApp('wechat-full')">
             <div class="app-icon">
@@ -497,6 +523,15 @@ body{
             <div class="app-name">Safari</div>
           </div>
         </div>
+        </div><!-- /第 1 面 -->
+
+        <!-- 第 2、3 面（图标由 JS 分配） -->
+        <div class="page"><div class="app-grid" id="appGrid2"></div></div>
+        <div class="page"><div class="app-grid" id="appGrid3"></div></div>
+        </div><!-- /pages -->
+
+        <!-- 页码小圆点 -->
+        <div class="page-dots" id="pageDots"><i class="on"></i><i></i><i></i></div>
 
         <!-- 底部 Dock（iOS 固定四个：电话 / Safari / 信息 / 音乐） -->
         <div class="dock" id="dock"></div>
@@ -1173,7 +1208,24 @@ var IOS_GRID = [
   {n:'QQ音乐', app:'qqmusic', c1:'#3BD97D', c2:'#12B34F',
    s:'<g fill="#FFF24A"><circle cx="21.5" cy="36" r="4.6"/><circle cx="37" cy="32" r="4.6"/></g>' +
      '<g stroke="#FFF24A" stroke-width="3" stroke-linecap="round" fill="none">' +
-     '<path d="M26 36V20.5l15-3.2V32"/></g>'}
+     '<path d="M26 36V20.5l15-3.2V32"/></g>'},
+  // ---- 第三方常用 App ----
+  {n:'抖音', c1:'#2A2A2E', c2:'#0B0B0D',
+   s:'<path d="M30.5 15v16.4a5.6 5.6 0 1 1-5.6-5.6" fill="none" stroke="#25F4EE" stroke-width="3.2" stroke-linecap="round"/>' +
+     '<path d="M30.5 13v16.4a5.6 5.6 0 1 1-5.6-5.6" fill="none" stroke="#FE2C55" stroke-width="3.2" stroke-linecap="round" transform="translate(1.6,1.6)"/>' +
+     '<path d="M36 15.5c1.4 2.8 3.6 4.2 6 4.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>'},
+  {n:'小红书', c1:'#FF2E4D', c2:'#E01B34',
+   s:'<text x="28" y="25.5" font-size="12.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">小红</text>' +
+     '<text x="28" y="41" font-size="12.5" font-weight="700" fill="#fff" text-anchor="middle" font-family="sans-serif">书</text>'},
+  {n:'哔哩哔哩', c1:'#FF9AC1', c2:'#FB7299',
+   s:'<rect x="12.5" y="21" width="31" height="21" rx="5.5" fill="#fff"/>' +
+     '<path d="M19 15.5l5 5.5M37 15.5l-5 5.5" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>' +
+     '<g fill="#FB7299"><circle cx="22.5" cy="30.5" r="2.1"/><circle cx="33.5" cy="30.5" r="2.1"/></g>' +
+     '<path d="M24.5 35.5h7" stroke="#FB7299" stroke-width="2" stroke-linecap="round"/>'},
+  {n:'美团', c1:'#FFE03A', c2:'#FFC300',
+   s:'<text x="28" y="37" font-size="21" font-weight="800" fill="#1A1A1A" text-anchor="middle" font-family="sans-serif">美团</text>'},
+  {n:'微博', c1:'#FF8A3D', c2:'#F5462C',
+   s:'<text x="28" y="36" font-size="19" font-weight="800" fill="#fff" text-anchor="middle" font-family="sans-serif">微博</text>'}
 ];
 
 // Dock（iOS 固定 4 个）
@@ -1187,6 +1239,22 @@ var IOS_DOCK = [
      '<g stroke="#fff" stroke-width="2.6"><path d="M26 36V20l15-3v16"/></g>'}
 ];
 
+// 三面桌面容器
+function homeGrids(){
+  return [document.getElementById('appGrid'), document.getElementById('appGrid2'), document.getElementById('appGrid3')]
+    .filter(Boolean);
+}
+// 把图标平均分到三面桌面
+function distributeHome(nodes){
+  var grids = homeGrids();
+  if(!grids.length) return;
+  var per = Math.ceil(nodes.length / grids.length);
+  grids.forEach(function(g){ g.innerHTML = ''; });
+  nodes.forEach(function(n, i){
+    grids[Math.min(Math.floor(i / per), grids.length - 1)].appendChild(n);
+  });
+}
+
 // 应用布局：复用原有节点，其余动态生成
 function layoutHome(){
   var grid = document.getElementById('appGrid'), dock = document.getElementById('dock');
@@ -1199,14 +1267,16 @@ function layoutHome(){
     if(it.app && pool[it.app]) return pool[it.app];
     return makeIOSItem(forcedApp ? {n:it.n, c1:it.c1, c2:it.c2, s:it.s, app:forcedApp} : it);
   }
-  grid.innerHTML = '';
-  IOS_GRID.forEach(function(it){ grid.appendChild(node(it)); });
+  var list = IOS_GRID.map(function(it){ return node(it); });
+  distributeHome(list);                                  // 34 个图标 → 12 / 12 / 10
   if(dock){
     dock.innerHTML = '';
     IOS_DOCK.forEach(function(it){ dock.appendChild(node(it)); });
   }
   // 给每个图标写入唯一标识，供拖动排序后记忆位置
-  Array.prototype.forEach.call(grid.children, function(el){ iconKey(el); });
+  homeGrids().forEach(function(g){
+    Array.prototype.forEach.call(g.children, function(el){ iconKey(el); });
+  });
   if(dock) Array.prototype.forEach.call(dock.children, function(el){ iconKey(el); });
 }
 
@@ -1223,7 +1293,10 @@ function iconKey(el){
 
 function saveOrder(){
   var o = { grid: [], dock: [] };
-  Array.prototype.forEach.call(document.querySelectorAll('#appGrid > .app-item'), function(el){ o.grid.push(iconKey(el)); });
+  // 三面桌面按 第1面→第2面→第3面 的顺序合成一个完整序列
+  homeGrids().forEach(function(g){
+    Array.prototype.forEach.call(g.children, function(el){ o.grid.push(iconKey(el)); });
+  });
   Array.prototype.forEach.call(document.querySelectorAll('#dock > .app-item'), function(el){ o.dock.push(iconKey(el)); });
   try { localStorage.setItem(ORDER_KEY, JSON.stringify(o)); } catch(e){}
 }
@@ -1231,20 +1304,82 @@ function saveOrder(){
 function applyOrder(){
   var raw = null;
   try { raw = JSON.parse(localStorage.getItem(ORDER_KEY) || 'null'); } catch(e){ raw = null; }
-  if(!raw) return;
-  [['appGrid','grid'], ['dock','dock']].forEach(function(pair){
-    var box = document.getElementById(pair[0]);
-    if(!box) return;
-    var order = raw[pair[1]] || [];
-    var nodes = Array.prototype.slice.call(box.children);
+  // 先按记忆的顺序重新排图标，再重新分配到三面
+  if(raw && raw.grid && raw.grid.length){
+    var nodes = [];
+    homeGrids().forEach(function(g){
+      Array.prototype.forEach.call(g.children, function(el){ nodes.push(el); });
+    });
     nodes.sort(function(a, b){
-      var ia = order.indexOf(iconKey(a)), ib = order.indexOf(iconKey(b));
+      var ia = raw.grid.indexOf(iconKey(a)), ib = raw.grid.indexOf(iconKey(b));
       if(ia < 0) ia = 1000 + nodes.indexOf(a);
       if(ib < 0) ib = 1000 + nodes.indexOf(b);
       return ia - ib;
     });
-    nodes.forEach(function(n){ box.appendChild(n); });
+    distributeHome(nodes);
+  }
+  var dock = document.getElementById('dock');
+  if(dock && raw && raw.dock && raw.dock.length){
+    var ds = Array.prototype.slice.call(dock.children);
+    ds.sort(function(a, b){
+      var ia = raw.dock.indexOf(iconKey(a)), ib = raw.dock.indexOf(iconKey(b));
+      if(ia < 0) ia = 1000; if(ib < 0) ib = 1000;
+      return ia - ib;
+    });
+    ds.forEach(function(n){ dock.appendChild(n); });
+  }
+}
+
+/* ==================== 桌面左右滑动切换三面 ==================== */
+var curPage = 0, PAGE_N = 3;
+function goPage(i){
+  curPage = Math.max(0, Math.min(PAGE_N - 1, i));
+  var pages = document.getElementById('pages');
+  if(pages) pages.style.transform = 'translateX(-' + (curPage * 100 / PAGE_N) + '%)';
+  var dots = document.querySelectorAll('#pageDots i');
+  Array.prototype.forEach.call(dots, function(d, k){ d.classList.toggle('on', k === curPage); });
+}
+function bindPageSwipe(){
+  var pages = document.getElementById('pages');
+  if(!pages) return;
+  var sx = 0, sy = 0, active = false, decided = false;
+
+  function start(x, y){ sx = x; sy = y; active = true; decided = false; }
+  function move(x, y, e){
+    if(!active || window._iconDrag) return;
+    var dx = x - sx, dy = y - sy;
+    if(!decided && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) decided = true; // 判定为横滑
+    if(decided && e && e.cancelable) e.preventDefault();
+  }
+  function end(x, y){
+    if(!active) return;
+    active = false;
+    if(window._iconDrag) return;
+    if(Date.now() < (window._noSwipeUntil || 0)) return;   // 刚拖动完图标，忽略这次滑动
+    var dx = x - sx, dy = y - sy;
+    if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2){
+      goPage(curPage + (dx < 0 ? 1 : -1));
+    }
+  }
+
+  pages.addEventListener('touchstart', function(e){
+    if(!e.touches || !e.touches[0]) return;
+    var t = e.touches[0]; start(t.clientX, t.clientY);
+  }, {passive:true});
+  pages.addEventListener('touchmove', function(e){
+    if(!e.touches || !e.touches[0]) return;
+    var t = e.touches[0]; move(t.clientX, t.clientY, e);
+  }, {passive:false});
+  pages.addEventListener('touchend', function(e){
+    if(!e.changedTouches || !e.changedTouches[0]) return;
+    var t = e.changedTouches[0]; end(t.clientX, t.clientY);
   });
+  pages.addEventListener('touchcancel', function(){ active = false; });
+
+  // 电脑预览用鼠标拖
+  pages.addEventListener('mousedown', function(e){ start(e.clientX, e.clientY); });
+  pages.addEventListener('mousemove', function(e){ move(e.clientX, e.clientY, e); });
+  window.addEventListener('mouseup', function(e){ if(active) end(e.clientX, e.clientY); });
 }
 
 // 给一个容器（桌面网格 / Dock）启用长按拖动
@@ -1262,6 +1397,7 @@ function enableDrag(box){
     holdTimer = setTimeout(function(){
       dragEl = item;
       dragEl.classList.add('icon-dragging');
+      window._iconDrag = true;                        // 拖动期间禁止桌面翻页
       if(navigator.vibrate) navigator.vibrate(12);  // 手机上轻震反馈
     }, 320);                                        // 长按 320ms 进入拖动
   });
@@ -1291,6 +1427,8 @@ function enableDrag(box){
     }
     dragEl.classList.remove('icon-dragging');
     dragEl = null;
+    window._iconDrag = false;
+    window._noSwipeUntil = Date.now() + 320;   // 拖动结束后短暂禁用翻页，避免误切
     justDragged = true;
     saveOrder();
     setTimeout(function(){ justDragged = false; }, 60);  // 拖完不触发点击
@@ -1452,8 +1590,10 @@ function tick(){
 }
 layoutHome();
 applyOrder();                                                  // 还原上次用户排好的图标顺序
-enableDrag(document.getElementById('appGrid'));                // 桌面图标长按拖动
-enableDrag(document.getElementById('dock'));                   // Dock 图标长按拖动
+homeGrids().forEach(function(g){ enableDrag(g); });            // 三面桌面都支持长按拖动
+enableDrag(document.getElementById('dock'));                   // Dock 图标长按拖动（不参与分页）
+bindPageSwipe();                                               // 左右滑动切换三面
+goPage(0);
 tick();
 setInterval(tick,10000);
 
