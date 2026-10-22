@@ -132,6 +132,8 @@ body{
   z-index:20;
 }
 .app-screen.active{transform:translateX(0);}
+/* 完整版微信（iframe）铺满整个 App 页面 */
+.wx-full-frame{width:100%;height:100%;border:0;display:block;background:#ededed;}
 .app-nav{
   padding:14px 16px;
   background:rgba(255,255,255,0.72);
@@ -303,7 +305,7 @@ body{
           <span>5G&nbsp;&nbsp;🔋</span>
         </div>
         <div class="app-grid">
-          <div class="app-item" onclick="openApp('wechat')">
+          <div class="app-item" onclick="openApp('wechat-full')">
             <div class="app-icon">
               <svg width="56" height="56" viewBox="0 0 56 56">
                 <defs>
@@ -407,6 +409,11 @@ body{
             <div class="app-name">Safari</div>
           </div>
         </div>
+      </div>
+
+      <!-- ============ 微信 · 完整版（我的产物微信，iframe 嵌入） ============ -->
+      <div class="app-screen" id="app-wechat-full">
+        <iframe class="wx-full-frame" src="wechat-main.html?embed=1" title="微信"></iframe>
       </div>
 
       <!-- ============ 微信 · 聊天列表 ============ -->
