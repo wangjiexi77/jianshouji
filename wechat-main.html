@@ -300,34 +300,34 @@ const friends = [
   { id:'daoxian',  name:'到贤',   avatar:'🧑', bg:'#cfe3ff', img:'avatar-daoxian.jpg' },
 ];
 
-// 2026 BLG 群成员 17人
+// 2026 BLG 群成员 17人：7位具名 + on（号主橘猫头像）+ 9位不知名工作人员
 const blgMembers = [
   {name:'牢勋', avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg'},
   {name:'k皇', avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg'},
   {name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg'},
   {name:'大丹', avatar:'🏔️', bg:'#d5e5f5'},
-  {name:'ON', avatar:'🍔', bg:'#ffe9c4'},
-  {name:'Elk', avatar:'🦌', bg:'#d5e5f5'},
-  {name:'Tabe', avatar:'📋', bg:'#e3d6ff'},
-  {name:'Dian', avatar:'🎯', bg:'#cfe3ff'},
-  {name:'木木', avatar:'🌲', bg:'#d5e5f5'},
-  {name:'阿Bin', avatar:'🦁', bg:'#ffe9c4'},
-  {name:'牙膏', avatar:'🦷', bg:'#ffd6e8'},
-  {name:'Missing', avatar:'❓', bg:'#e3d6ff'},
-  {name:'369', avatar:'🎲', bg:'#cfe3ff'},
-  {name:'左手', avatar:'✋', bg:'#d5e5f5'},
-  {name:'卡萨', avatar:'🃏', bg:'#ffe9c4'},
-  {name:'小明', avatar:'💡', bg:'#ffd6e8'},
-  {name:'小虎', avatar:'🐯', bg:'#e3d6ff'},
+  {name:'光勋', avatar:'💡', bg:'#ffe9c4'},
+  {name:'袁玺', avatar:'🎨', bg:'#e3d6ff'},
+  {name:'林青', avatar:'🌿', bg:'#d5e5f5'},
+  {name:'on', avatar:'🐱', bg:'#cfe3ff', img:'avatar-cat.jpg'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#ececec'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#e8e8e8'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#e4e4e4'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#e0e0e0'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#dcdcdc'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#d8d8d8'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#d4d4d4'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#d0d0d0'},
+  {name:'不知名工作人员', avatar:'👤', bg:'#cccccc'},
 ];
 
-// 一直串，烦不烦 群成员 5人
+// 一直串，烦不烦 群成员 5人：号主本人 + 牢勋 + k皇 + 陈泽彬 + 哥哥
 const czMembers = [
+  {name:'圈恩', avatar:'🐱', bg:'#cfe3ff', img:'avatar-cat.jpg'},
   {name:'牢勋', avatar:'🐑', bg:'#cfe3ff', img:'avatar-laoxun.jpg'},
   {name:'k皇', avatar:'🌸', bg:'#ffd6e8', img:'avatar-khuang.jpg'},
-  {name:'大师', avatar:'👾', bg:'#e3d6ff', img:'avatar-dashi.jpg'},
-  {name:'大丹', avatar:'🏔️', bg:'#d5e5f5'},
-  {name:'圈恩', avatar:'🐱', bg:'#cfe3ff'},
+  {name:'陈泽彬', avatar:'👦', bg:'#cfe3ff', img:'avatar-zebin.jpg'},
+  {name:'哥哥', avatar:'👨', bg:'#ffe9c4', img:'avatar-gege.jpg'},
 ];
 
 // 所有聊天（好友 + 群聊）
@@ -399,7 +399,7 @@ const chats = {
   },
   // ---- 群聊 ----
   blg2026: {
-    type:'group', name:'2026 BLG', avatar:'👥', bg:'#4787ee',
+    type:'group', name:'2026 BLG（17）', avatar:'👥', bg:'#4787ee', img:'group-blg.png',
     memberCount:17, members:blgMembers,
     last:'大丹：明天训练赛时间', time:'18:00', unread:5,
     messages:[
@@ -411,13 +411,13 @@ const chats = {
     ]
   },
   yizhicuan: {
-    type:'group', name:'一直串，烦不烦', avatar:'🔥', bg:'#ea6245',
+    type:'group', name:'一直串，烦不烦（5）', avatar:'🔥', bg:'#ea6245', img:'group-yizhicuan.png',
     memberCount:5, members:czMembers,
     last:'牢勋：别串了行不行', time:'16:40', unread:0,
     messages:[
-      {time:'16:30', sender:'大师', text:'又串我'},
+      {time:'16:30', sender:'陈泽彬', text:'又串我'},
       {time:'16:32', sender:'k皇', text:'哈哈哈'},
-      {time:'16:35', sender:'大丹', text:'串得好'},
+      {time:'16:35', sender:'哥哥', text:'串得好'},
       {time:'16:40', sender:'牢勋', text:'别串了行不行'},
     ]
   },
