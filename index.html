@@ -132,6 +132,14 @@ body{
   z-index:20;
 }
 .app-screen.active{transform:translateX(0);}
+/* 上滑关闭：从底部上滑时整页向下滑出 */
+.app-screen.closing{
+  transform:translateY(105%) !important;
+  transition:transform .26s cubic-bezier(.32,.72,0,1);
+  pointer-events:none;
+}
+/* 拖动跟手时倾斜缩放，模拟 iOS 后台卡片手感 */
+.app-screen.dragging{transition:none;}
 /* 完整版微信（iframe）铺满整个 App 页面 */
 .wx-full-frame{width:100%;height:100%;border:0;display:block;background:#ededed;}
 .app-nav{
@@ -924,7 +932,87 @@ function closeApp(name){
 window.addEventListener('message', function(e){
   if(e.data && e.data.type === 'wechat-exit'){ closeApp('wechat-full'); }
 });
-/* 状态栏实时时间 + 日历图标真实日期 */
+/* ==================== iOS 上滑关闭 App ==================== */
+// 手势区域：屏幕底部 90px（Home 指示条附近）起手，向上滑超过 55px 即关闭该 App
+const SWIPE_ZONE = 90;    // 起手区高度
+const SWIPE_DIST = 55;    // 触发关闭的上滑距离
+
+// 关闭某个 App 页面（带上滑出场动画）
+function swipeClose(name){
+  const scr = document.getElementById('app-' + name);
+  if(!scr || !scr.classList.contains('active')) return;
+  scr.classList.remove('dragging');
+  scr.classList.add('closing');
+  // 动画结束后复位，避免影响下次打开
+  setTimeout(function(){
+    scr.classList.remove('closing');
+    scr.classList.remove('active');
+  }, 270);
+}
+
+// 给单个页面绑定上滑手势（touch + mouse 都支持）
+function bindSwipe(el, name){
+  let startX = 0, startY = 0, tracking = false, dragging = false;
+
+  function down(x, y){
+    const r = el.getBoundingClientRect();
+    // 只有从底部区域起手才算
+    if(y < r.bottom - SWIPE_ZONE) return;
+    startX = x; startY = y; tracking = true; dragging = false;
+  }
+  function move(x, y, e){
+    if(!tracking) return;
+    const dy = y - startY;              // 向上为负
+    const dx = Math.abs(x - startX);
+    if(dy < -10 && dy < -dx){           // 确认是上滑而非横向滑
+      dragging = true;
+      if(e.cancelable) e.preventDefault();
+      el.classList.add('dragging');
+      // 跟手：最多下移 40% 屏高，避免拖出空白
+      el.style.transform = 'translateY(' + Math.max(dy * 0.45, -120) + 'px)';
+    }
+  }
+  function up(x, y){
+    if(!tracking) return;
+    const dy = y - startY;
+    const dx = Math.abs(x - startX);
+    tracking = false;
+    el.style.transform = '';
+    if(dragging && dy < -SWIPE_DIST && dx < 120){
+      el.classList.remove('dragging');
+      swipeClose(name);
+      return;
+    }
+    el.classList.remove('dragging');
+  }
+
+  // 触摸
+  el.addEventListener('touchstart', function(e){
+    const t = e.touches[0]; down(t.clientX, t.clientY);
+  }, {passive:true});
+  el.addEventListener('touchmove', function(e){
+    const t = e.touches[0]; move(t.clientX, t.clientY, e);
+  }, {passive:false});
+  el.addEventListener('touchend', function(e){
+    const t = e.changedTouches[0]; up(t.clientX, t.clientY);
+  });
+
+  // 鼠标（桌面预览也能用）
+  el.addEventListener('mousedown', function(e){ down(e.clientX, e.clientY); });
+  el.addEventListener('mousemove', function(e){
+    if(tracking) move(e.clientX, e.clientY, e);
+  });
+  window.addEventListener('mouseup', function(e){
+    if(tracking) up(e.clientX, e.clientY);
+  });
+}
+
+// 绑定到所有 App 页面（完整版微信用 iframe，手势在微信内部处理）
+document.querySelectorAll('.app-screen').forEach(function(el){
+  const name = el.id.replace('app-', '');
+  if(name === 'wechat-full') return;
+  bindSwipe(el, name);
+});
 var WEEKS=["周日","周一","周二","周三","周四","周五","周六"];
 function tick(){
   var d=new Date();
