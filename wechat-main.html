@@ -81,7 +81,7 @@ body{
 .group-gap{height:10px;background:#ededed;}
 /* 字母索引条 */
 .letter-bar{
-  background:#ededed;padding:5px 14px;
+  background:#ededed;padding:4px 14px;
   font-size:13px;color:#888;font-weight:500;
 }
 
@@ -124,9 +124,12 @@ body{
 }
 
 /* ============ 通讯录 ============ */
-.contacts-list .cell .ic-box{width:40px;height:40px;border-radius:6px;}
+/* 微信原版：cell高约55px，头像40x40圆角4px，姓名16px/常规字重/#181818 */
+.contacts-list .cell{padding:8px 14px;}
+.contacts-list .cell .ic-box{width:40px;height:40px;border-radius:4px;}
+.contacts-list .cell .nm{font-size:16px;color:#181818;font-weight:400;}
 .contact-ava{
-  width:40px;height:40px;border-radius:6px;flex-shrink:0;
+  width:40px;height:40px;border-radius:4px;flex-shrink:0;
   display:grid;place-items:center;font-size:20px;
 }
 
