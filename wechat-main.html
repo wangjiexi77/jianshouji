@@ -1410,6 +1410,34 @@ function doExit(){
   document.getElementById('exitScreen').classList.add('show');
 }
 
+/* ==================== 上滑退出微信（嵌入手机时） ==================== */
+// 在手机模拟器内（iframe）从屏幕底部上滑 → 退出微信回到桌面，同 iOS 手感
+if(isEmbed){
+  let sy = 0, sx = 0, tracking = false;
+  const ZONE = 46, DIST = 55;   // 底部起手区 / 触发距离
+
+  function start(x, y){
+    if(y < window.innerHeight - ZONE) return;
+    sx = x; sy = y; tracking = true;
+  }
+  function end(x, y){
+    if(!tracking) return;
+    tracking = false;
+    const dy = y - sy, dx = Math.abs(x - sx);
+    if(dy < -DIST && dx < 100) doExit();
+  }
+
+  document.addEventListener('touchstart', function(e){
+    const t = e.touches[0]; start(t.clientX, t.clientY);
+  }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    const t = e.changedTouches[0]; end(t.clientX, t.clientY);
+  });
+  // 鼠标（桌面预览）
+  document.addEventListener('mousedown', function(e){ start(e.clientX, e.clientY); });
+  document.addEventListener('mouseup', function(e){ end(e.clientX, e.clientY); });
+}
+
 renderWechatList();
 renderContacts();
 
