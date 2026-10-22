@@ -79,11 +79,16 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 
 /* ============ 我 ============ */
 .me-header{display:flex;align-items:center;gap:12px;padding:18px 14px;background:#fff;border-bottom:0.5px solid #e5e5e5;}
-.me-avatar{width:60px;height:60px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;font-size:30px;background:#cfe3ff;}
+.me-avatar{width:60px;height:60px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;font-size:30px;background:#cfe3ff;overflow:hidden;}
+.me-avatar img{width:100%;height:100%;object-fit:cover;}
 .me-info{flex:1;}
 .me-name{font-size:19px;font-weight:600;color:#111;}
 .me-id{font-size:13px;color:#888;margin-top:4px;}
-.me-qr{color:#c7c7cc;font-size:20px;}
+.me-right{display:flex;align-items:center;gap:6px;color:#c7c7cc;font-size:20px;}
+/* 状态按钮 */
+.me-status{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-bottom:0.5px solid #e5e5e5;}
+.me-status .status-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border:1px solid #e0e0e0;border-radius:14px;font-size:13px;color:#666;}
+.me-status .status-circle{width:22px;height:22px;border-radius:50%;border:1.5px solid #ccc;display:grid;place-items:center;font-size:12px;color:#999;}
 
 /* ============ 底部Tab栏 ============ */
 .tabbar{flex-shrink:0;display:flex;background:#f7f7f7;border-top:0.5px solid #d9d9d9;padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom));}
@@ -200,19 +205,25 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
     <!-- 我页 -->
     <div class="page" data-page="me">
       <div class="me-header">
-        <div class="me-avatar">🤓</div>
-        <div class="me-info">
-          <div class="me-name">顽皮的自己</div>
-          <div class="me-id">微信号：BLG_fan_1025</div>
+        <div class="me-avatar">
+          <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=%E4%B8%80%E5%8F%AA%E6%A9%98%E8%89%B2%E7%8C%AB%E5%92%AA%E7%9A%84%E5%A4%B4%E5%83%8F%E7%85%A7%E7%89%87%EF%BC%8C%E5%86%99%E5%AE%9E%E6%91%84%E5%BD%B1%E9%A3%8E%E6%A0%BC%EF%BC%8C%E6%AD%A3%E6%96%B9%E5%BD%A2%E6%9E%84%E5%9B%BE%EF%BC%8C%E7%BA%AF%E8%89%B2%E7%AE%80%E6%B4%81%E8%83%8C%E6%99%AF&image_size=square" alt="头像">
         </div>
-        <span class="me-qr">▦</span>
+        <div class="me-info">
+          <div class="me-name">圈恩</div>
+          <div class="me-id">微信号：wxid_9jpslechg2tr22</div>
+        </div>
+        <div class="me-right"><span>▦</span><span>›</span></div>
+      </div>
+      <div class="me-status">
+        <span class="status-btn">＋ 状态</span>
+        <span class="status-circle">⟳</span>
       </div>
       <div class="group-gap"></div>
-      <div class="cell"><div class="ic-box" style="background:#07c160;">💳</div><span class="nm">服务</span><span class="arr">›</span></div>
+      <div class="cell"><div class="ic-box" style="background:#07c160;">💬</div><span class="nm">服务</span><span class="arr">›</span></div>
       <div class="group-gap"></div>
-      <div class="cell"><div class="ic-box" style="background:#fa9f3c;">⭐</div><span class="nm">收藏</span><span class="arr">›</span></div>
-      <div class="cell"><div class="ic-box" style="background:#4787ee;">🖼️</div><span class="nm">朋友圈</span><span class="arr">›</span></div>
-      <div class="cell"><div class="ic-box" style="background:#f2b23c;">🎟️</div><span class="nm">卡包</span><span class="arr">›</span></div>
+      <div class="cell"><div class="ic-box" style="background:linear-gradient(135deg,#ff6b6b,#ffa94d);">🎁</div><span class="nm">收藏</span><span class="arr">›</span></div>
+      <div class="cell"><div class="ic-box" style="background:#4787ee;">🏔️</div><span class="nm">朋友圈</span><span class="arr">›</span></div>
+      <div class="cell"><div class="ic-box" style="background:#4787ee;">📄</div><span class="nm">作品</span><span class="arr">›</span></div>
       <div class="cell"><div class="ic-box" style="background:#f2b23c;">😀</div><span class="nm">表情</span><span class="arr">›</span></div>
       <div class="group-gap"></div>
       <div class="cell"><div class="ic-box" style="background:#5f6ded;">⚙️</div><span class="nm">设置</span><span class="arr">›</span></div>
@@ -274,7 +285,7 @@ body{background:#ededed;display:flex;align-items:center;justify-content:center;}
 /* ==================== 数据定义 ==================== */
 
 // 我的信息
-const ME = { name:'顽皮的自己', avatar:'🤓', bg:'#cfe3ff' };
+const ME = { name:'圈恩', avatar:'🐱', bg:'#cfe3ff' };
 
 // 好友列表（通讯录）
 const friends = [
@@ -313,7 +324,7 @@ const czMembers = [
   {name:'k皇', avatar:'🌸', bg:'#ffd6e8'},
   {name:'大师', avatar:'👾', bg:'#e3d6ff'},
   {name:'大丹', avatar:'🏔️', bg:'#d5e5f5'},
-  {name:'顽皮的自己', avatar:'🤓', bg:'#cfe3ff'},
+  {name:'圈恩', avatar:'🐱', bg:'#cfe3ff'},
 ];
 
 // 所有聊天（好友 + 群聊）
